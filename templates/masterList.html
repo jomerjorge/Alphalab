@@ -1,0 +1,256 @@
+<div class="form-inline">
+    <input size="12" type="text" class="form-control input-sm" name="search_by_company" id="search_by_company" placeholder="Company" autocomplete="off" > &nbsp
+
+    <input size="12" type="text" class="form-control input-sm" name="search_by_address" id="search_by_address" placeholder="Address" autocomplete="off" > &nbsp
+
+    <select class="form-control input-sm" id="search_by_bstyle" name="search_by_bstyle">
+                              <option value="" >< Select Business Style ></option>
+                              <option value="WRS">WRS</option>
+                              <option value="Hospital">Hospital</option>
+                              <option value="Waterworks">Waterworks</option>
+                              <option value="Food Establishment">Food Establishment</option>
+                              <option value="Industrial">Industrial</option>
+                              <option value="Land Developer">Land Developer</option>
+                              <option value="Mall">Mall</option>
+                              <option value="School">School</option>
+                              <option value="Residential">Residential</option>
+                              <option value="Resort">Resort</option>
+                              <option value="Others">Others</option>
+                            </select>
+    &nbsp
+
+    <select class="form-control input-sm" id="fsa" name="fsa">
+    </select>&nbsp
+
+    <button type="button" class="btn btn-primary btn-sm" id="search_btn_ml" name="search_btn_ml"><i class="fa fa-filter" aria-hidden="true"></i> Filter Search</button> &nbsp &nbsp
+
+  <button type="button" class="btn btn-success btn-sm pull-right" onclick="masterlist_excel()" id="masterlist_excel" name="masterlist_excel"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp Export</button>
+
+</div>
+<br/>
+    <div class="tableFixHead" id="report_tbl_mL">
+      <table class="table table-bordered">
+      <thead>
+        <tr>
+            <th width="5%">ID No.</th>
+            <th width="10%">Company Name</th>
+            <th width="8%">Client Name</th>
+            <th width="12%">Complete Address</th>
+            <th width="6%">Contact No.</th>
+            <th width="6%">Email</th>
+            <th width="7%">Business Style</th>
+            <th width="7%">FSA</th>
+            <th width="7%">Total Number of Test</th>
+            <th width="7%">Last RWT/RWWT Number</th>
+            <th width="7%">Last Date of Sample</th>
+            <th width="7%">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      </table>
+    </div>
+<br />
+<br />
+
+  <div>
+      Page: <b><span id="page"></span></b> of <b><span id="pagenum"></span></b>  &nbsp
+      <!-- Page: <b><span id="page"></span></b> &nbsp -->
+      Record(s) Found: <b><span id="recFound"></span></b> &nbsp
+      Total Records: <b><span id="totalrecord"></span></b> &nbsp 
+      <button class="btn btn-xs btn-primary prev-btn" id="prevBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+      <button class="btn btn-xs btn-primary next-btn" id="nextBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+      
+  </div>
+
+<script type="text/javascript" src="script/fixedHeader.js"></script> 
+<script type="text/javascript" src="script/fsa_analyst_ddlist.js"></script>
+
+ <script type="text/javascript">
+
+$(document).keyup(function(event) {
+    if (event.keyCode === 113) {   // focust on search 113 = f2
+      $("#search_by_company").val("");
+      $("#search_by_address").val("");
+      $("#search_by_address").focus();
+      $("#fsa").focus();
+    }
+  });
+
+$("#search_by_address").keyup(function(event) {
+    if (event.keyCode === 13) {         // 13 = enter 
+        $("#search_btn_ml").click();
+    }
+});
+
+
+function masterlist_excel(){
+      check_session();
+      var searchByCompany = $('#search_by_company').val();
+      var searchByAddress = $('#search_by_address').val();
+      var searchByBstyle = $('#search_by_bstyle').val();
+      var searchByAFSA = $('#fsa').val();
+
+  if (searchByCompany !='' || searchByAddress != '' || searchByBstyle != '' || searchByAFSA != '') { // for not directing exporting of data (have bug)
+  document.location.href = '/alphalab/api/reporting/exportExcel_mL.php?&search_com_ml=' + searchByCompany + '&search_add_ml=' + searchByAddress + '&search_bstyle=' + searchByBstyle + '&search_afsa=' + searchByAFSA;
+  } 
+  else
+  {
+  swal("Please Search Anything!");
+  }
+
+}
+
+
+ $(document).ready(function(){
+  $('#search_btn_ml').click(function(){
+    check_session();
+    page = 1;
+    var searchByCompany = $('#search_by_company').val();
+    var searchByAddress = $('#search_by_address').val();
+    var searchByBstyle = $('#search_by_bstyle').val();
+    var searchByAFSA = $('#fsa').val();
+
+    if(searchByCompany !='' || searchByAddress != '' || searchByBstyle != '' || searchByAFSA != '')
+    {
+      $.ajax({
+        url:"/alphalab/api/reporting/rep_pagination_mL.php",  
+        method:"GET",  
+        dataType: "json",
+        data:{
+          page:page,
+          pagelimit:pagelimit,
+          search_com_ml:searchByCompany,
+          search_add_ml:searchByAddress,
+          search_bstyle:searchByBstyle,
+          search_afsa:searchByAFSA
+        },
+        success:function(data){
+        console.log(data);
+        fetch_data_mL_report(data);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+      });
+    }
+    else
+    {
+      swal("Invalid!");
+    }
+  });
+});
+
+
+  //page buttons
+  $(document).ready(function(){
+    page = 1;
+    pagelimit = 50;
+    datafound = 0;
+
+  // fetchData();
+
+  $(".prev-btn").on("click", function(){
+    if (page > 1) { 
+      page--;
+    fetchData();
+    
+    }
+    console.log("Prev Page: " + page);
+  });
+
+  $(".next-btn").on("click", function(){
+    if (page * pagelimit < datafound) {
+    page++;
+    fetchData();
+     
+    }
+    console.log("Next Page: " + page);
+  });
+  
+  // fetch data
+  function fetchData(){
+     var searchByCompany = $('#search_by_company').val();
+     var searchByAddress = $('#search_by_address').val();
+     var searchByBstyle = $('#search_by_bstyle').val();
+     var searchByAFSA = $('#fsa').val();
+    $.ajax({
+      url:"/alphalab/api/reporting/rep_pagination_mL.php",
+      method:"GET",  
+      dataType:"json",
+      data: {
+        page:page,
+        pagelimit:pagelimit,
+        search_com_ml:searchByCompany,
+        search_add_ml:searchByAddress,
+        search_bstyle:searchByBstyle,
+        search_afsa:searchByAFSA
+
+      },
+      success: function(data){
+        console.log(data);
+        fetch_data_mL_report(data);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+});
+
+//fetch data function
+
+function fetch_data_mL_report(data) {
+
+if (data.success) {
+          $("div.tableFixHead").scrollTop(0); // to return to top when click search
+          var dataArr = data.success.data;
+          totalrecord = data.success.totalrecord;
+          var html = "";
+          datafound = data.success.datafound;
+          pagenum = Math.floor((datafound / pagelimit) + 1); // to get the quotient without decimals
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+
+          for (var i = 0; i < dataArr.length; i++)
+          {
+            html += "<tr>";
+            html += "<td>" + dataArr[i].id_num + "</td>";
+            html += "<td>" + dataArr[i].company_name + "</td>";
+            html += "<td>" + dataArr[i].client_name + "</td>";
+            html += "<td>" + dataArr[i].add_st + " " + dataArr[i].add_city + " " + dataArr[i].add_prov + "</td>";
+            html += "<td>" + dataArr[i].contact + "</td>";
+            html += "<td>" + dataArr[i].email_add + "</td>";
+            html += "<td>" + dataArr[i].business_style + "</td>";
+            html += "<td>" + dataArr[i].ass_fsa + "</td>";
+            html += "<td>" + dataArr[i].fsa + "</td>";
+            html += "<td>" + dataArr[i].rwt_num + "</td>";
+            html += "<td>" + dataArr[i].date_rcvd + "</td>";
+            html += "<td>" + dataArr[i].c_status + "</td>";
+            html += "</tr>";
+          }
+          $("#report_tbl_mL tbody").html(html);
+          $("#recFound").html(datafound);
+          $("#totalrecord").html(totalrecord);
+          $("#page").html(page);
+          $("#pagenum").html(pagenum);
+
+        }
+          else{
+           datafound = 0;  // to reset the paging at 0, :log at f12
+           html += "<td colspan='18'>" + "No Record(s) Found." + "</td>";
+           $("#report_tbl_mL tbody").html(html);
+           $("#totalrecord").html(0);
+           $("#recFound").html(0);
+           $("#page").html(0);
+           $("#pagenum").html(0);
+        }
+
+}
+//fetch data function end 
+        
+</script>

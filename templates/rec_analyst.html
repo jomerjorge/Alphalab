@@ -1,0 +1,253 @@
+
+<!-- Analyst  -->
+
+<div class="col-sm-8">
+
+  <div style="width:60%;" class="input-group">
+              <input  type="text" class="form-control input-sm" name="search_analyst" id="search_analyst"  placeholder="Search Analyst">
+            <span class="input-group-btn">
+              <button class="btn btn-sm btn-primary" onclick="fetch_analyst_data()"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            </span>
+        </div> 
+ <hr>
+ <label class="header_color">• Analyst Table</label>
+ <button class="btn btn-xs btn-primary pull-right" onclick="add_analyst()"><i class="fa fa-user-plus" aria-hidden="true"></i> Add Analyst</button>
+ <div class="tableFixHead" id="analystTBL">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Analyst Name</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+</div>
+
+<!--Add Analyst Modal -->
+    <div class="modal fade" id="analyst_modal" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h2 class="modal-title"></h2>
+                </div>
+                
+            <!-- Modal Body -->
+  <form id="add_analyst_form">
+    <div class="modal-body">
+              
+    <div class="form-group">
+      <input type="text" class="form-control input-sm" id="analyst_name" name="analyst_name" required="" placeholder="Complete Name" autocomplete="off">
+    </div>
+  
+    <div class="form-group">
+      <select class="form-control input-sm" id="analyst_dept" name="analyst_dept" required="">
+        <option value="" disabled selected hidden>< -- Department -- ></option>
+        <option value="MICRO DEPT">Micro Dept.</option>
+        <option value="PCHEM DEPT">Pchem Dept.</option>
+        <option value="MICRO-PCHEM DEPT">Micro-Pchem Dept.</option>
+      </select>
+    </div>
+   
+    <div class="form-group">
+      <select class="form-control input-sm" id="analyst_status" name="analyst_status" required="">
+        <option value="" disabled selected hidden>< -- Status -- ></option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </div>
+        
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+      <button class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Cancel</button>
+    </div>
+
+      </div>
+  </form>
+           </div>
+
+        </div>
+      </div>
+    <!-- FORM MODAL END -->
+
+<!-- Analyst End  -->
+
+<script type="text/javascript" src="script/fixedHeader.js"></script> 
+
+<script type="text/javascript">
+  
+
+// ANALYST TABLE 
+  fetch_analyst_data();
+  function fetch_analyst_data() {
+    check_session();
+    var search_analyst = $('#search_analyst').val();
+    // ajax() method to make api calls
+    $.ajax({
+      url:"/alphalab/api/analyst/index.php",
+      dataType: "json",
+      type: "GET",
+      data: {
+        search:search_analyst
+      },
+      success: function(data) {
+        console.log(data);
+        
+        if (data.success) {
+          var dataArr = data.success.data;
+          var html = "";
+          a_list = dataArr; 
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].analyst_name + "</td>";
+            html += "<td>" + dataArr[i].analyst_dept + "</td>";
+
+            if (dataArr[i].analyst_status == 'Active') {
+               html += "<td><label class='label label-success'>" + dataArr[i].analyst_status + "</label></td>";
+            }else {
+               html += "<td><label class='label label-danger'>" + dataArr[i].analyst_status + "</label></td>";
+            }
+
+            // html += "<td>" + dataArr[i].analyst_status + "</td>";
+            html += "<td>" + "<button class='btn btn-xs btn-primary' onclick='update_analyst(" + i + ")'><i class='fa fa-pencil-square-o' aria-hidden='true'></i> Update</button>" + " "
+                   + "<button class='btn btn-xs btn-danger' onclick='delete_analyst(" + i + ")'><i class='fa fa-trash-o' aria-hidden='true'></i> Delete</button>" + "</td>";
+            html += "</tr>";
+             }
+
+          $("#analystTBL tbody").html(html);
+        }
+        else{
+           html += "<td colspan='4'>" + "No record found." + "</td>";
+           $("#analystTBL tbody").html(html);
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+
+
+  function add_analyst()
+    {
+        check_session();
+        a_id = 0;
+        clrfld();
+        document.getElementById('analyst_name').style.removeProperty('border');
+
+        $('#add_analyst_form')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+        $("#analyst_modal").modal("show"); // show bootstrap modal
+        $(".modal-title").text("Add New Analyst"); // Set Title to Bootstrap modal title
+    }
+
+  $("#add_analyst_form").submit(function(e){
+    e.preventDefault();
+    var url = "/alphalab/api/analyst/";
+    var data = {};
+    data["id"] = a_id;
+    data["analyst_name"] = $('#analyst_name').val();
+    data["analyst_dept"] = $('#analyst_dept').val();
+    data["analyst_status"] = $('#analyst_status').val();
+   
+
+      url += (a_id > 0 ? "update.php" : "new.php");
+        $.ajax({
+            type:'POST',
+            url: url,
+            dataType: "json",
+            data:data,
+            success:function(response){
+              $("#analyst_modal").modal("hide");
+              clrfld();
+              swal("Success", response.message, "success")
+              fetch_analyst_data();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+              console.log(jqXHR);
+              console.log(textStatus);
+              console.log(errorThrown);
+            } 
+            });
+        return false; // very important!!
+      });
+
+  //Update Analyst Data
+    function update_analyst(i){
+      check_session();
+      var item = a_list[i];
+      a_id = item.analyst_id;
+      console.log("item id: " + a_id);
+
+      $("#analyst_name").val(item.analyst_name);
+      $("#analyst_dept").val(item.analyst_dept);
+      $("#analyst_status").val(item.analyst_status);
+      document.getElementById('analyst_name').style.removeProperty('border');
+      $("#analyst_modal").modal("show"); // show bootstrap modal
+      $(".modal-title").text("Update Account"); // Set Title to Bootstrap modal title
+    }
+  //Update Analyst Data end
+
+// Delete Analyst
+function delete_analyst(i){
+      var item = a_list[i];
+      analyst_id = item.analyst_id; //id for analyst
+      var data =  {};
+      data["analyst_id"] = analyst_id;
+      console.log(analyst_id);
+            
+          swal({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        })
+        .then((result) => {
+          if (result.value) {
+                $.ajax({
+                    type:'POST',
+                    url: "/alphalab/api/analyst/delete.php",
+                    dataType: "json",
+                    data: data,
+                    success:function(response){
+                    swal("Deleted!", response.message, "success");
+                        fetch_analyst_data();
+                        console.log(data);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                      console.log(jqXHR);
+                      console.log(textStatus);
+                      console.log(errorThrown);
+                    }
+                });
+                return false;
+          } 
+          return false;
+        });
+      }
+// Delete Analyst End
+
+function clrfld(){
+  $("#analyst_name").val("");
+  $("#analyst_dept").val("");
+  $("#analyst_status").val("");
+} 
+
+// ANALYST TABLE END
+
+ 
+
+
+</script>

@@ -1,0 +1,672 @@
+
+<h4 class="bg_color_fsa"><span class="text_pad">Field Service Asst. Dashboard</span></h4>
+<hr>
+ <div class="form-inline">
+   <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="From" name="From" placeholder="From date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> <strong>--</strong>
+  <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="to" name="to" placeholder="To date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> &nbsp &nbsp
+    <button type="button" class="btn btn-primary btn-sm" onclick="totalTest();" id="rangeDash_totalTest" name="rangeDash_totalTest"><i class="fa fa-filter" aria-hidden="true"></i> Filter Search</button> 
+ </div>
+
+    <div id="totalTest_">
+        <canvas id="totalTest"></canvas> 
+    </div>
+  <!--   <div id="totalTest_wi">
+        <canvas id="totalTestwi"></canvas> 
+    </div> -->
+    <br/>
+    <br/>
+    <br/>
+    <div id="byFsa_">
+        <canvas id="byFsa"></canvas> 
+    </div> 
+    <br/>
+    <br/>
+    <br/>
+    <div id="byFsa_wrs_">
+        <canvas id="byFsa_wrs"></canvas> 
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div id="byFsa_company_">
+        <canvas id="byFsa_company"></canvas> 
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div id="byFsa_resort_">
+        <canvas id="byFsa_resort"></canvas> 
+    </div>
+    
+<script type="text/javascript" src="script/datepickerFromTo.js"></script> 
+<script type="text/javascript" src="script/scrollOnTop.js"></script> 
+
+<script type="text/javascript">
+   
+ 
+  function totalTest(){
+        check_session();
+        $(document).ready(function(){
+          var date_start = $('#From').val();
+          var date_end = $('#to').val();
+      
+            if(date_start != '' && date_end != '')
+            {
+                // TOTAL TEST 
+                $.ajax({
+                    url: "/alphalab/api/dataGraph/dash_fsa/totalTest.php?",
+                    method:"GET", 
+                    dataType: 'json',
+                    data:{
+                      From:date_start, 
+                      to:date_end 
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        var graphData_m = [],
+                            graphData_p = [],
+                            graphData_mw = [],
+                            graphData_w = [];
+                        for(var i=0;i<res.length;i++){
+                            graphData_m.push(res[i].m_count);
+                            graphData_p.push(res[i].p_count);
+                            graphData_mw.push(res[i].mw_count);
+                            graphData_w.push(res[i].w_count);
+                        }
+
+
+                        //Make a call to the function to draw the bar graph
+                        drawGraph_totalTest(graphData_m, graphData_p, graphData_mw, graphData_w);
+                    },
+                    complete: function() {
+                        console.log("AJAX request done");
+                    },
+                    error: function() {
+                        console.log("Error occurred during AJAX request")
+                    }               
+                });
+
+
+                // // TOTAL TEST 
+                // $.ajax({
+                //     url: "/alphalab/api/dataGraph/dash_fsa/totalTestwi.php?",
+                //     method:"GET", 
+                //     dataType: 'json',
+                //     data:{
+                //       From:date_start, 
+                //       to:date_end 
+                //     },
+                //     success: function(res) {
+                //         console.log(res);
+                //         var graphData_m = [],
+                //             graphData_p = [],
+                //             graphData_mw = [],
+                //             graphData_w = [];
+                //         for(var i=0;i<res.length;i++){
+                //             graphData_m.push(res[i].m_count);
+                //             graphData_p.push(res[i].p_count);
+                //             graphData_mw.push(res[i].mw_count);
+                //             graphData_w.push(res[i].w_count);
+                //         }
+
+
+                //         //Make a call to the function to draw the bar graph
+                //         drawGraph_totalTestwi(graphData_m, graphData_p, graphData_mw, graphData_w);
+                //     },
+                //     complete: function() {
+                //         console.log("AJAX request done");
+                //     },
+                //     error: function() {
+                //         console.log("Error occurred during AJAX request")
+                //     }               
+                // });
+                // per FSA (ALL CLIENTS)
+                $.ajax({
+                    url: "/alphalab/api/dataGraph/dash_fsa/fsa.php?",
+                    method:"GET", 
+                    dataType: 'json',
+                    data:{
+                      From:date_start, 
+                      to:date_end 
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        var graphData_m = [],
+                            graphLabel_fsa = [],
+                            graphData_p = [],
+                            graphData_w = [];
+                        for(var i=0;i<res.length;i++){
+                            graphLabel_fsa.push(res[i].fsa);
+                            graphData_m.push(res[i].m_count);
+                            graphData_p.push(res[i].p_count);
+                            graphData_w.push(res[i].w_count);
+                        }
+
+                        //Make a call to the function to draw the bar graph
+                        drawGraph_perFSa(graphLabel_fsa, graphData_m, graphData_p, graphData_w);
+                    },
+                    complete: function() {
+                        console.log("AJAX request done");
+                    },
+                    error: function() {
+                        console.log("Error occurred during AJAX request")
+                    }               
+                });
+                // per FSA (WRS)
+                $.ajax({
+                    url: "/alphalab/api/dataGraph/dash_fsa/fsa_wrs.php?",
+                    method:"GET", 
+                    dataType: 'json',
+                    data:{
+                      From:date_start, 
+                      to:date_end 
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        var graphData_m = [],
+                            graphLabel_fsa = [],
+                            graphData_p = [];
+                        for(var i=0;i<res.length;i++){
+                            graphLabel_fsa.push(res[i].fsa);
+                            graphData_m.push(res[i].m_count);
+                            graphData_p.push(res[i].p_count);
+                        }
+
+                        //Make a call to the function to draw the bar graph
+                        drawGraph_perFSa_wrs(graphLabel_fsa, graphData_m, graphData_p);
+                    },
+                    complete: function() {
+                        console.log("AJAX request done");
+                    },
+                    error: function() {
+                        console.log("Error occurred during AJAX request")
+                    }               
+                });
+
+                // per FSA (COMPANY)
+                $.ajax({
+                    url: "/alphalab/api/dataGraph/dash_fsa/fsa_company.php?",
+                    method:"GET", 
+                    dataType: 'json',
+                    data:{
+                      From:date_start, 
+                      to:date_end 
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        var graphData_m = [],
+                            graphLabel_fsa = [],
+                            graphData_p = [],
+                            graphData_w = [];
+                        for(var i=0;i<res.length;i++){
+                            graphLabel_fsa.push(res[i].fsa);
+                            graphData_m.push(res[i].m_count);
+                            graphData_p.push(res[i].p_count);
+                            graphData_w.push(res[i].w_count);
+                        }
+
+                        //Make a call to the function to draw the bar graph
+                        drawGraph_perFSa_company(graphLabel_fsa, graphData_m, graphData_p, graphData_w);
+                    },
+                    complete: function() {
+                        console.log("AJAX request done");
+                    },
+                    error: function() {
+                        console.log("Error occurred during AJAX request")
+                    }               
+                });
+
+                // per FSA (Resort)
+                $.ajax({
+                    url: "/alphalab/api/dataGraph/dash_fsa/resort.php?",
+                    method:"GET", 
+                    dataType: 'json',
+                    data:{
+                      From:date_start, 
+                      to:date_end 
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        var graphData_m = [],
+                            graphLabel_fsa = [],
+                            graphData_p = [];
+                        for(var i=0;i<res.length;i++){
+                            graphLabel_fsa.push(res[i].fsa);
+                            graphData_m.push(res[i].m_count);
+                            graphData_p.push(res[i].p_count);
+                        }
+
+                        //Make a call to the function to draw the bar graph
+                        drawGraph_perFSa_resort(graphLabel_fsa, graphData_m, graphData_p);
+                    },
+                    complete: function() {
+                        console.log("AJAX request done");
+                    },
+                    error: function() {
+                        console.log("Error occurred during AJAX request")
+                    }               
+                });
+
+            }
+            else{
+              swal("Please fill all field");
+            }
+        }); 
+        // TOTAL TEST - GRAPH
+        function drawGraph_totalTest(data_m_count, data_p_count, data_mw_count, data_w_count)
+        {
+          // to clear previous grap when hover
+           
+            document.getElementById("totalTest_").innerHTML = '&nbsp;';
+            document.getElementById("totalTest_").innerHTML = '<canvas id="totalTest"></canvas>';
+            // to clear previous grap when hover end
+              var totalTest = document.getElementById("totalTest").getContext('2d');
+              var totalTest_ = new Chart(totalTest, {
+
+                type: 'doughnut',
+                data: {
+                    labels: ['Micro Count','Pchem Count','Micro Waste Count','Waste Count'],
+                    datasets: [{
+                        data: [data_m_count, data_p_count, data_mw_count, data_w_count],
+                        backgroundColor: ['#0479cc', '#9c9dc9', '#4285F4', '#009b77'],
+                        borderWidth: 1
+                    }]
+                },
+
+                 options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'TOTAL NO. OF TESTS'
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#F0F2F5',
+                        anchor: 'center',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                }
+
+                // type: 'bar',
+                // data: {
+                //     labels: ['Total'],
+                //     datasets: [{    
+                //         label: 'Micro Count',
+                //         data: data_m_count,
+                //         backgroundColor: '#0479cc',
+                //         borderWidth: 1
+
+                //     },
+                //     {
+                //         label: 'Pchem Count',
+                //         data: data_p_count,
+                //         backgroundColor:'#21a0fa',
+                //         borderWidth: 1
+                //     },
+                //     {
+                //         label: 'Waste Count',
+                //         data: data_w_count,
+                //         backgroundColor:'#009b77',
+                //         borderWidth: 1
+                //     }   
+                //     ]
+
+                // },
+                // options: {
+                //         scales: {
+                //             yAxes: [{
+                //                 ticks: {
+                //                     autoSkip: false,
+                //                     beginAtZero:true
+                //                 }
+                //             }]
+                //         }
+                //     }
+
+            });  
+        }
+
+        // function drawGraph_totalTestwi(data_m_count, data_p_count, data_mw_count, data_w_count)
+        // {
+        //   // to clear previous grap when hover
+           
+        //     document.getElementById("totalTest_wi").innerHTML = '&nbsp;';
+        //     document.getElementById("totalTest_wi").innerHTML = '<canvas id="totalTestwi"></canvas>';
+        //     // to clear previous grap when hover end
+        //       var totalTestwi = document.getElementById("totalTestwi").getContext('2d');
+        //       var totalTest_wi = new Chart(totalTestwi, {
+
+        //         type: 'doughnut',
+        //         data: {
+        //             labels: ['Micro Count','Pchem Count','Micro Waste Count','Waste Count'],
+        //             datasets: [{
+        //                 data: [data_m_count, data_p_count, data_mw_count, data_w_count],
+        //                 backgroundColor: ['#0479cc', '#9c9dc9', '#4285F4', '#009b77'],
+        //                 borderWidth: 1
+        //             }]
+        //         },
+
+        //          options: {
+        //             layout: {
+        //                 padding: { // to adjust padding to the left to show the numbers
+        //                     left: 0,
+        //                     right: 50,
+        //                     top: 0,
+        //                     bottom: 0
+        //                 }
+        //             },
+        //             title: {
+        //               display: true,
+        //               text: 'TOTAL NO. OF WALK-IN TESTS'
+        //             },
+        //             plugins: {
+        //               datalabels: {
+        //                 color: '#F0F2F5',
+        //                 anchor: 'center',
+        //                 align: 'end',
+        //                 formatter: Math.round,
+        //                 font: {
+        //                   weight: 'bold'
+        //                 }
+        //               }
+        //             }
+        //         }
+
+        //     });  
+        // }
+
+        // per FSA (ALL CLIENTS) - GRAPH
+        function drawGraph_perFSa(Labels, data_m_count, data_p_count, data_w_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byFsa_").innerHTML = '&nbsp;';
+            document.getElementById("byFsa_").innerHTML = '<canvas id="byFsa"></canvas>';
+            // to clear previous grap when hover end
+              var byFsa = document.getElementById("byFsa").getContext('2d');
+              var byFsa_ = new Chart(byFsa, {
+
+                type: 'horizontalBar',
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Waste Count',
+                        data: data_w_count,
+                        backgroundColor:'#009b77',
+                        borderWidth: 1
+                    }   
+                    ]
+
+                },
+                options: { 
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'NO. OF TESTS PER FSA (ALL CLIENTS)',
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#1C1E21',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                }
+            });  
+        }
+
+        // per FSA (WRS) - GRAPH
+        function drawGraph_perFSa_wrs(Labels, data_m_count, data_p_count, data_w_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byFsa_wrs_").innerHTML = '&nbsp;';
+            document.getElementById("byFsa_wrs_").innerHTML = '<canvas id="byFsa_wrs"></canvas>';
+            // to clear previous grap when hover end
+              var byFsa_wrs = document.getElementById("byFsa_wrs").getContext('2d');
+              var byFsa_wrs_ = new Chart(byFsa_wrs, {
+
+                type: 'horizontalBar',
+
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    }  
+                    ]
+
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'NO. OF TESTS PER FSA (WRS)',
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#1C1E21',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    }
+            });  
+        }
+
+        // per FSA (COMPANY) - GRAPH
+        function drawGraph_perFSa_company(Labels, data_m_count, data_p_count, data_w_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byFsa_company_").innerHTML = '&nbsp;';
+            document.getElementById("byFsa_company_").innerHTML = '<canvas id="byFsa_company"></canvas>';
+            // to clear previous grap when hover end
+              var byFsa_company = document.getElementById("byFsa_company").getContext('2d');
+              var byFsa_company_ = new Chart(byFsa_company, {
+
+                type: 'horizontalBar',
+
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Waste Count',
+                        data: data_w_count,
+                        backgroundColor:'#009b77',
+                        borderWidth: 1
+                    }   
+                    ]
+
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'NO. OF TESTS PER FSA (COMPANY)',
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#1C1E21',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    }
+            });  
+        }
+
+         // per FSA (Resort) - GRAPH
+        function drawGraph_perFSa_resort(Labels, data_m_count, data_p_count, data_w_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byFsa_resort_").innerHTML = '&nbsp;';
+            document.getElementById("byFsa_resort_").innerHTML = '<canvas id="byFsa_resort"></canvas>';
+            // to clear previous grap when hover end
+              var byFsa_resort = document.getElementById("byFsa_resort").getContext('2d');
+              var byFsa_resort_ = new Chart(byFsa_resort, {
+
+                type: 'horizontalBar',
+
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    }  
+                    ]
+
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'NO. OF TESTS PER FSA (RESORT)',
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#1C1E21',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    }
+            });  
+        }
+
+
+    }
+
+</script>

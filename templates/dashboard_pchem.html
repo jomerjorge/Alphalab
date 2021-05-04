@@ -1,0 +1,248 @@
+
+<h4 class="bg_color_pw"><span class="text_pad">Physicochemical Dashboard</span></h4>
+<hr>
+ <div class="form-inline">
+
+    
+
+    <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="From" name="From" placeholder="From date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+    </div> 
+
+  <strong>--</strong>
+
+  <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="to" name="to" placeholder="To date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> &nbsp &nbsp
+
+    <select class="form-control input-sm" id="chemAnalyst_ddlist" name="chemAnalyst_ddlist" ></select>
+
+    <select style="display: none;" class="form-control input-sm" id="chemAnalyst_ddlist_inac" name="chemAnalyst_ddlist_inac" ></select>
+
+    <button type="button" class="btn btn-primary btn-sm" onclick="numParam();" id="rangeDash_pw" name="rangeDash_pw"><i class="fa fa-filter" aria-hidden="true"></i> Filter Search</button> 
+ </div>
+    <div class="inac_analyst">
+    <input type="checkbox" name="inac_analyst" id="inac_analyst" onclick="toggle('.myClass', this)"> 
+    <label class="alert-info">Include Inactive Analyst </label>
+    </div>
+    <br />
+
+    <div id="analyst_pw_">
+        <canvas id="analyst_pw"></canvas> 
+    </div>
+    <br />
+    <br />
+    <div id="numParam_">
+        <canvas id="numParam"></canvas> 
+    </div>
+   
+    
+<script type="text/javascript" src="script/fsa_analyst_ddlist.js"></script> 
+<script type="text/javascript" src="script/datepickerFromTo.js"></script> 
+<script type="text/javascript" src="script/scrollOnTop.js"></script> 
+
+<script type="text/javascript">
+  
+   
+    function toggle(className, obj) {
+    if ( obj.checked ) {
+        sel_first();
+        $('#chemAnalyst_ddlist').hide();
+        $('#chemAnalyst_ddlist_inac').show();
+    }
+    else {
+        sel_first();
+        $('#chemAnalyst_ddlist').show();
+        $('#chemAnalyst_ddlist_inac').hide();
+    }
+    }
+
+    function sel_first() {
+        $("#chemAnalyst_ddlist_inac").val($("#chemAnalyst_ddlist_inac option:first").val());
+        $("#chemAnalyst_ddlist").val($("#chemAnalyst_ddlist option:first").val());
+    }
+
+   
+  function numParam(){
+        check_session();
+        $(document).ready(function(){
+          var date_start = $('#From').val();
+          var date_end = $('#to').val();
+          var searchByAnalyst = $('#chemAnalyst_ddlist').val() + $('#chemAnalyst_ddlist_inac').val();
+            if(date_start != '' && date_end != '' && searchByAnalyst != '' )
+            {
+            $.ajax({
+                url: "/alphalab/api/dataGraph/dash_pw/numParam.php?",
+                method:"GET", 
+                dataType: 'json',
+                data:{
+                  From:date_start, 
+                  to:date_end 
+                },
+                success: function(res) {
+                    var graphLabels = [],
+                        graphData = [];
+                    for(var i=0;i<res.length;i++){
+                        graphData.push(res[i].nums);
+                        graphLabels.push(res[i].pw_param);
+                    }
+                    //Make a call to the function to draw the bar graph
+                    drawGraph(graphLabels, graphData);
+                },
+                complete: function() {
+                    console.log("AJAX request done");
+                },
+                error: function() {
+                    console.log("Error occurred during AJAX request")
+                }               
+            });
+
+
+            $.ajax({
+                    url: "/alphalab/api/dataGraph/dash_pw/searchAnalyst.php?",
+                    method:"GET",  
+                    dataType: 'json',
+                    data: {
+                        pw_search:searchByAnalyst,
+                        From:date_start, 
+                        to:date_end 
+                    },
+                    success: function(res) {
+                        var graphLabels_analyst = [],
+                            graphData_analyst = [];
+                        for(var i=0;i<res.length;i++){
+                            graphData_analyst.push(res[i].nums);
+                            graphLabels_analyst.push(res[i].pw_param);
+                        }
+                        //Make a call to the function to draw the bar graph
+                        dataGraph_analyst(graphLabels_analyst, graphData_analyst);
+                    },
+                    complete: function() {
+                        console.log("AJAX request done");
+                    },
+                    error: function() {
+                        console.log("Error occurred during AJAX request")
+                    }               
+                });
+
+             
+
+            }
+            else{
+              swal("Please fill all field");
+            }
+        }); 
+        
+        function drawGraph(Labels, Data){
+          // to clear previous grap when hover
+            document.getElementById("numParam_").innerHTML = '&nbsp;';
+            document.getElementById("numParam_").innerHTML = '<canvas id="numParam"></canvas>';
+            // to clear previous grap when hover end
+              var numParam = document.getElementById("numParam");
+              numParam.height = 250;
+              var numParam_ = new Chart(numParam, {
+                type: 'horizontalBar',
+                data: {
+                    labels: Labels,
+                    datasets: [{
+                        label: 'Total Count of Analysis.',
+                        data: Data,
+                        backgroundColor:'#a5d1a0',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                        text: 'Total Count of Analysis per Parameter.',
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                autoSkip: false,
+                                beginAtZero:true
+
+                            }
+                        }]
+                    }
+                },
+                    plugins: {
+                      datalabels: {
+                        color: '#178728',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                }
+            });  
+        }
+
+    function dataGraph_analyst(Labels, Data){
+        // to clear previous grap when hover
+        document.getElementById("analyst_pw_").innerHTML = '&nbsp;';
+        document.getElementById("analyst_pw_").innerHTML = '<canvas id="analyst_pw"></canvas>';
+        // to clear previous grap when hover end
+          var analyst_pw = document.getElementById("analyst_pw");
+          analyst_pw.height = 200;
+          var analyst_pw_ = new Chart(analyst_pw, {
+            type: 'horizontalBar',
+            data: {
+                labels: Labels,
+                datasets: [{
+                    label: 'Parameter Count',
+                    data: Data,
+                    backgroundColor:'#d6aef2',
+                    borderWidth: 1
+                }]
+            },
+                options: {
+                    layout: {
+        padding: { // to adjust padding to the left to show the numbers
+            left: 0,
+            right: 50,
+            top: 0,
+            bottom: 0
+        }
+    },
+                    title: {
+                      display: true,
+                        text: 'Total Count per Parameter Analyzed by the Analyst.',
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                autoSkip: false,
+                                beginAtZero:true
+
+                            }
+                        }]
+                    }
+                },
+                    plugins: {
+                      datalabels: {
+                        color: '#7921cc',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                }
+        });  
+    }
+
+    }
+
+</script>
