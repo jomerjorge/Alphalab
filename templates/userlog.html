@@ -1,0 +1,184 @@
+   
+    
+<div class="col-sm-8">
+
+   <div style="width:60%;" class="input-group">
+              <input  type="text" class="form-control input-sm" name="search_username" id="search_username"  placeholder="Search...">
+            <span class="input-group-btn">
+              <button class="btn btn-sm btn-primary" onclick="searchUsername()"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            </span>
+        </div> 
+<hr>
+
+ <label class="header_color">• User Login Activity</label>
+
+ <div class="pull-right">
+    <button class="btn btn-xs btn-success prev-btn" id="prevBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i> PREV</button>
+    <button class="btn btn-xs btn-success next-btn" id="nextBtn">NEXT <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+     &nbsp <b>Page: <span id="page"></span></b> 
+    </div>
+
+  <div class="form-group">
+    <div class="tableFixHead" id="clientTable">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="8%">USERNAME</th>
+            <th width="18%">ACTION</th>
+            <th width="15%">STAMP</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+   
+  </div>
+</div>
+
+ <!--  <div>
+      Record(s) Found: <b><span id="recordFound"></span></b>
+      <br /> 
+      <br />
+      Total Records: <b><span id="totalrecord"></span></b> 
+      <br />
+      <br />
+  </div> -->
+
+
+  <script type="text/javascript" src="script/fixedHeader.js"></script> 
+  <script type="text/javascript">
+  	
+
+  	 // page buttons
+  $(document).ready(function(){
+    page = 1;
+    pagelimit = 30;
+    
+  fetchData();
+
+  $(".prev-btn").on("click", function(){
+ 
+    if (page > 1) { 
+      page--;
+      fetchData();
+      $("div.tableFixHead").scrollTop(0);
+    }
+    
+
+    console.log("Prev Page: " + page);
+  });
+
+  $(".next-btn").on("click", function(){
+    if (page * pagelimit < datafound) {
+    page++;
+    fetchData(); 
+    $("div.tableFixHead").scrollTop(0);
+    }
+
+    console.log("Next Page: " + page);
+  });
+  
+  // fetch data
+  function fetchData() {
+    check_session();
+    var searchuser = $('#search_username').val();
+    // ajax() method to make api calls
+    $.ajax({
+      url: "/alphalab/api/userlog_activity/userlog_hist.php",
+      dataType: "json",
+      type: "GET",
+      data: {
+        page: page,
+        pagelimit: pagelimit,
+        search:searchuser
+      },
+      success: function(data) {
+        console.log(data);
+        
+        if (data.success) {
+          var dataArr = data.success.data;
+          totalrecord = data.success.totalrecord;
+          var html = "";
+          datafound = data.success.datafound;
+          // to select the specific client when viewing View Records Tab
+          // list = dataArr; 
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].userlog_name + "</td>";
+            html += "<td>" + dataArr[i].userlog_action + "</td>";
+            html += "<td>" + dataArr[i].userlog_timestamp + "</td>";
+            html += "</tr>";
+             }
+
+          $("#clientTable tbody").html(html);
+          $("#recordFound").html(datafound);
+          $("#totalrecord").html(totalrecord);
+          $("#page").html(page);
+
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+});
+
+  // search client 
+      function searchUsername(){
+
+        check_session();
+        page = 1;
+        var txt_user = $('#search_username').val();
+            $.ajax({  
+            url:"/alphalab/api/userlog_activity/userlog_hist.php",  
+            method:"GET",  
+            dataType: "json",
+            data:{
+              page: page,
+              pagelimit: pagelimit,
+              search:txt_user
+            },  
+            success: function(data) {
+            console.log(data);
+     
+          if (data.success) {
+          var dataArr = data.success.data;
+          totalrecord = data.success.totalrecord;
+          var html = "";
+          datafound = data.success.datafound;
+          list = dataArr; // to select the specific client when viewing View Records Tab
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].userlog_name + "</td>";
+            html += "<td>" + dataArr[i].userlog_action + "</td>";
+            html += "<td>" + dataArr[i].userlog_timestamp + "</td>";    
+            html += "</tr>";
+             }
+          $("#clientTable tbody").html(html);
+          $("#recordFound").html(datafound);
+          $("#totalrecord").html(totalrecord);
+          $("#page").html(page);
+        }
+        else{
+           datafound = 0;  // to reset the paging at 0, :log at f12
+           html += "<td colspan='7'>" + "No record found." + "</td>";
+           $("#clientTable tbody").html(html);
+           $("#recordFound").html(0);
+           $("#totalrecord").html(0);
+           $("#page").html(1);
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }  
+            });  
+        
+}
+
+  </script>

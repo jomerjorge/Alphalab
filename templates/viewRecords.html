@@ -1,0 +1,682 @@
+
+  <div class="form-inline">
+        <input type="text" class="form-control input-sm" name="search_text" id="search_text"  placeholder="Company Name/Owner/ID">
+        <input type="text" class="form-control input-sm" id="searchBy_add_vr"  placeholder="Address">
+        <button class="btn btn-primary btn-sm" id="s_click" onclick="searchClient()"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+  </div>
+<br>
+
+    <div class="tableFixHead" id="clientTable">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="8%">ID NO.</th>
+            <th width="18%">COMPANY NAME</th>
+            <th width="10%">CLIENT NAME</th>
+            <th width="20%">ADDRESS</th>
+            <th width="12%">CONTACT NO.</th>
+            <th width="8%">EMAIL ADD.</th>
+            <th width="8%">INDUSTRY</th>
+            <th width="12%">ASSIGNED FSA</th>
+            <th width="12%">STATUS</th>
+            <th width="8%">ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+  <br />
+    <div class="pull-right">
+    Record(s) Found: <b><span id="recordFound"></span></b> &nbsp
+    Total Records: <b><span id="totalrecord"></span></b> &nbsp
+    <button class="btn btn-xs btn-success prev-btn" id="prevBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i> PREV</button>
+    <button class="btn btn-xs btn-success next-btn" id="nextBtn">NEXT <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+     &nbsp <b>Page: <span id="page"></span> of <span id="pagenum"></span></b> 
+    </div>
+<br>
+<br>
+
+<!-- VIEW TEST RECORDS -->
+  <div class="modal modal-wide fade" id="modalReq" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalReq">Test Records</span>
+                </div>
+                <div class="modal-body">
+                 <div class="tableFixHead">
+                  <table id="reqRec" class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th width="10%">TEST CATEGORY</th>
+                        <th width="8%">RWT NO.</th>
+                        <th width="10%">DATE RECEIVED</th>
+                        <th width="10%">DATE OF SAMPLE</th>
+                        <th width="1%">MICRO</th>
+                        <th width="1%">PCHEM</th>
+                        <th width="1%">WASTE</th>
+                        <th width="10%">SUBMITTED BY</th>
+                        <!-- <th width="8%">STATUS</th> -->
+                        <th width="12%">REMARKS</th>
+                        <th width="6%">ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                  </div>
+
+                </div>
+              <div class="modal-footer">
+                  <input type="hidden" id="hiddenTestid" />
+                        <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span> Close</button>
+                  </div>
+              </div>
+        </div>
+    </div>
+<!-- END TEST RECORDS MODAL -->
+
+
+<!-- VIEW MICRO RESULTS -->
+  <div class="modal modal-wide fade" id="modalMicro" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalMicro">Test Records</span>
+                </div>
+                <div class="modal-body">   
+                   <div class="tableFixHead">
+                  <table id="microTable" class="table table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                          <th width="5%">Sample Type</th>
+                          <th width="10%">Place of Sample</th>
+                          <th width="7%">Sample Desc.</th>
+                          <th width="3%">Total Coliform</th>
+                          <th width="3%">Thermotolerant Coliform</th>
+                          <th width="2%">HPC</th>
+                          <th width="3%">E-Coli</th>
+                          <th width="3%">Analyst</th>
+                          <th width="2%">Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+                </div>
+                <div class="modal-footer">
+                      <input type="hidden" id="hiddenViewMicroid" />
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="glyphicon glyphicon-remove"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END MICRO MODAL -->
+
+<!-- VIEW MICRO WASTE RESULTS -->
+  <div class="modal modal-wide fade" id="modalMicroWaste" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalMicroWaste">Test Records</span>
+                </div>
+                <div class="modal-body">   
+                   <div class="tableFixHead">
+                  <table id="microwasteTable" class="table table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                          <th width="5%">Sample Type</th>
+                          <th width="7%">Sample Desc.</th>  
+                          <th width="3%">E-Coli</th>
+                          <th width="3%">Total Coliform</th>
+                          <th width="3%">Fecal Coliform</th>
+                          <th width="3%">Analyst</th>
+                          <th width="2%">Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+                </div>
+                <div class="modal-footer">
+                      <input type="hidden" id="hiddenViewMicroWasteid" />
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="glyphicon glyphicon-remove"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END MICRO WASTE MODAL -->
+
+
+<!-- VIEW PCHEM RESULTS -->
+  <div class="modal modal-wide fade" id="modalPchem" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalPchem">Test Records</span>
+                </div>
+                <div class="modal-body">
+                 <div class="tableFixHead">
+                  <table id="pchemTable" class="table table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th width="8%">Sample Desc.</th>
+                        <th width="12%">Test Parameters</th>
+                        <th width="12%">Method</th>
+                        <th width="15%">Test Results</th>
+                        <th width="8%">Analyst</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" id="hiddenViewPchem" />
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="glyphicon glyphicon-remove"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END PCHEM RESULTS MODAL -->
+
+<!-- VIEW WASTE RESULTS -->
+  <div class="modal modal-wide fade" id="modalWaste" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalWaste">Test Records</span>
+                </div>
+                <div class="modal-body">
+                  <div class="tableFixHead">
+                  <table id="wasteTable" class="table table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th width="8%">Sample Desc.</th>
+                        <th width="12%">Test Parameters</th>
+                        <th width="12%">Method</th>
+                        <th width="15%">Test Results</th>
+                        <th width="8%">Analyst</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" id="hiddenViewWaste" />
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="glyphicon glyphicon-remove"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END WASTE RESULTS MODAL -->
+
+<script type="text/javascript" src="script/fixedHeader.js"></script>
+
+ <script type="text/javascript">
+
+  $(document).keyup(function(event) {
+    if (event.keyCode === 113) {   // focust on search 113 = f2
+      $("#search_text").val("");
+      $("#searchBy_add_vr").val("");
+      $("#search_text").focus();
+    }
+  });
+
+  $("#search_text, #searchBy_add_vr").keyup(function(event) {
+    if (event.keyCode === 13) {         // 13 = enter 
+        $("#s_click").click();
+    }
+});
+
+  // page buttons
+  $(document).ready(function(){
+    page = 1;
+    pagelimit = 30;
+    
+  fetchData();
+
+  $(".prev-btn").on("click", function(){
+ 
+    if (page > 1) { 
+      page--;
+      fetchData();
+      $("div.tableFixHead").scrollTop(0);
+    }
+    
+
+    console.log("Prev Page: " + page);
+  });
+
+  $(".next-btn").on("click", function(){
+    if (page * pagelimit < datafound) {
+    page++;
+    fetchData(); 
+    $("div.tableFixHead").scrollTop(0);
+    }
+
+    console.log("Next Page: " + page);
+  });
+  
+  // fetch data
+  function fetchData() {
+    check_session();
+    var searchtext = $('#search_text').val();
+    var searchBy_add_vr = $('#searchBy_add_vr').val();
+    // ajax() method to make api calls
+    $.ajax({
+      url: "/alphalab/api/clients/pagination.php",
+      dataType: "json",
+      type: "GET",
+      data: {
+        page: page,
+        pagelimit: pagelimit,
+        search:searchtext,
+        searchBy_add_vr:searchBy_add_vr
+      },
+      success: function(data) {
+        console.log(data);
+        
+        if (data.success) {
+          var dataArr = data.success.data;
+          totalrecord = data.success.totalrecord;
+          var html = "";
+          datafound = data.success.datafound;
+          pagenum = Math.floor((datafound / pagelimit) + 1);
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].id_num + "</td>";
+            html += "<td>" + dataArr[i].company_name + "</td>";
+            html += "<td>" + dataArr[i].client_name + "</td>";
+            html += "<td>" + dataArr[i].add_st + " " + dataArr[i].add_city + " " + dataArr[i].add_prov + "</td>";
+            html += "<td>" + dataArr[i].contact + "</td>";
+            html += "<td>" + dataArr[i].email_add + "</td>";
+            html += "<td>" + dataArr[i].business_style + "</td>";
+            html += "<td>" + dataArr[i].ass_fsa + "</td>";
+            if (dataArr[i].c_status == 'Inactive')
+            {
+              html += '<td><label class="label label-danger">' + dataArr[i].c_status + '</label></td>';
+            }
+            else if (dataArr[i].c_status == 'Per Call')
+            {
+              html += '<td><label class="label label-warning">' + dataArr[i].c_status + '</label></td>';
+            }
+            else{
+              html += '<td><label class="label label-success">' + dataArr[i].c_status + '</label></td>';
+            }
+            html += "<td>" + "<button class='btn btn-xs btn-primary' title='View Records' onclick='view(" + i + ")'><i class='fa fa-folder-open-o' aria-hidden='true'></i> Rec.</button>" + "</td>";     
+            html += "</tr>";
+             }
+          $("#clientTable tbody").html(html);
+          $("#recordFound").html(datafound);
+          $("#totalrecord").html(totalrecord);
+          $("#page").html(page);
+          $("#pagenum").html(pagenum);
+
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+});
+
+      // search client 
+      function searchClient(){
+        $("div.tableFixHead").scrollTop(0);
+        check_session();
+        page = 1;
+        var txt = $('#search_text').val();
+        var searchBy_add_vr = $('#searchBy_add_vr').val();
+            $.ajax({  
+            url:"/alphalab/api/clients/pagination.php",  
+            method:"GET",  
+            dataType: "json",
+            data:{
+              page: page,
+              pagelimit: pagelimit,
+              search:txt,
+              searchBy_add_vr:searchBy_add_vr
+            },  
+            success: function(data) {
+            console.log(data);
+     
+          if (data.success) {
+          var dataArr = data.success.data;
+          totalrecord = data.success.totalrecord;
+          var html = "";
+          datafound = data.success.datafound;
+          pagenum = Math.floor((datafound / pagelimit) + 1);
+          list = dataArr; // to select the specific client when viewing View Records Tab
+          for (var i =  0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].id_num + "</td>";
+            html += "<td>" + dataArr[i].company_name + "</td>";
+            html += "<td>" + dataArr[i].client_name + "</td>";
+            html += "<td>" + dataArr[i].add_st + " " + dataArr[i].add_city + " " + dataArr[i].add_prov + "</td>";
+            html += "<td>" + dataArr[i].contact + "</td>";
+            html += "<td>" + dataArr[i].email_add + "</td>";
+            html += "<td>" + dataArr[i].business_style + "</td>";
+            html += "<td>" + dataArr[i].ass_fsa + "</td>";
+            if (dataArr[i].c_status == 'Inactive')
+            {
+              html += '<td><label class="label label-danger">' + dataArr[i].c_status + '</label></td>';
+            }
+            else if (dataArr[i].c_status == 'Per Call')
+            {
+              html += '<td><label class="label label-warning">' + dataArr[i].c_status + '</label></td>';
+            }
+            else{
+              html += '<td><label class="label label-success">' + dataArr[i].c_status + '</label></td>';
+            }
+            html += "<td>" + "<button class='btn btn-xs btn-primary' title='View Records' onclick='view(" + i + ")'><i class='fa fa-folder-open-o' aria-hidden='true'></i> Rec.</button>" + "</td>";     
+            html += "</tr>";
+             }
+          $("#clientTable tbody").html(html);
+          $("#recordFound").html(datafound);
+          $("#totalrecord").html(totalrecord);
+          $("#page").html(page);
+          $("#pagenum").html(pagenum);
+        }
+        else{
+           datafound = 0;  // to reset the paging at 0, :log at f12
+           html += "<td colspan='9'>" + "No record(s) found." + "</td>";
+           $("#clientTable tbody").html(html);
+           $("#recordFound").html(0);
+           $("#totalrecord").html(0);
+           $("#page").html(0);
+          $("#pagenum").html(0);
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }  
+            });  
+        
+}
+  
+    //View Records 
+    function view(i){
+      check_session();
+      // connected to client id
+      var item = list[i];
+      req_id = item.id; // id for client
+      $("#hiddenTestid").val(i);
+      $("#hiddenClientid").val(req_id);
+      $(".modal-title").text("Test Records");
+      $("#modalReq").modal("show");
+        // client id end
+      $("span#modalReq").html("<b>" + item.company_name + "</b>" + "&nbsp &nbsp " + item.client_name + "<br/>" + item.add_city + " " + item.add_prov);// Set Title to Bootstrap modal title
+      $.getJSON("/alphalab/api/testrequest/index.php?client_id=" + req_id, function(response){
+        $("#reqRec tbody").html("");
+        var html = "";
+        testRequestList = response;
+        var i = 0;
+        response.map(function(item)
+        {
+        var t_cat = item.test_cat;
+        html += "<tr>";
+        html += "<td>" + item.test_cat + "</td>"
+        html += "<td>" + item.rwt_num + "</td>"
+        html += "<td>" + item.date_rcvd + "</td>"
+        html += "<td>" + item.date_sample + "</td>" 
+        html += "<td class='center_num'>" + item.micro_count + "</td>" 
+        html += "<td class='center_num'>" + item.pchem_count + "</td>" 
+        html += "<td class='center_num'>" + item.waste_count + "</td>"
+        html += "<td>" + item.fsa + "</td>"
+        // html += "<td>" + item.state + "</td>"
+        html += "<td>" + item.remarks + "</td>"
+
+        // html += "<td>" + "<button class='btn btn-xs btn-primary' id='mbtn' title='Micro' onclick='viewMicro(" + i + ")'>Mc</button>" + " " 
+        //          + "<button class='btn btn-xs btn-primary' id='pbtn' title='Pchem' onclick='viewPchem(" + i + ")'>Pc</button>" + " " 
+        //          + "<button class='btn btn-xs btn-primary' id='wbtn' title='Waste' onclick='viewWaste(" + i + ")'>Ww</button>" + "</td>";
+        // html += "</tr>";
+
+        if ((t_cat == "PCHEM") || (t_cat == "SPECIAL(PCHEM)") || (t_cat == "POOL") || (t_cat == "DIALYSIS"))
+        {
+          html += "<td>" + "<button class='btn btn-xs pc_color' id='pbtn' title='Pchem' onclick='viewPchem(" + i + ")'>Pc</button>" + "</td>";
+            html += "</tr>";
+        } else if (t_cat == "MICRO")
+        {
+          html += "<td>" + "<button class='btn btn-xs mc_color' id='mbtn' title='Micro Potable' onclick='viewMicro(" + i + ")'>Mp</button>" + "</td>";
+            html += "</tr>";
+        } else if ((t_cat == "MICRO & PCHEM") || (t_cat == "MICRO with Special Test"))
+        {
+          html += "<td>" + "<button class='btn btn-xs mc_color' id='mbtn' title='Micro Potable' onclick='viewMicro(" + i + ")'>Mp</button>" + " " 
+                 + "<button class='btn btn-xs pc_color' id='pbtn' title='Pchem' onclick='viewPchem(" + i + ")'>Pc</button>" + "</td>";
+            html += "</tr>";
+        } else if ((t_cat == "WASTE") || (t_cat == "SPECIAL(WASTE)"))
+        {
+          html += "<td>" + "<button class='btn btn-xs ww_color' id='wbtn' title='Waste' onclick='viewWaste(" + i + ")'>Ww</button>" + "</td>";
+            html += "</tr>";
+        } else if (t_cat == "COLIFORM(Waste)")
+        {
+          html += "<td>" + "<button class='btn btn-xs ww_color' id='mwbtn' title='Micro Waste' onclick='viewMicroWaste(" + i + ")'>Mw</button>" + " " + "</td>";
+            html += "</tr>";
+        } else {
+          html += "<td>" + "<button class='btn btn-xs ww_color' id='mwbtn' title='Micro Waste' onclick='viewMicroWaste(" + i + ")'>Mw</button>" + " " 
+                 + "<button class='btn btn-xs ww_color' id='wbtn' title='Waste' onclick='viewWaste(" + i + ")'>Ww</button>" + "</td>";
+            html += "</tr>";
+        }
+
+        i++;
+        }
+        ); //end of function(item)
+        $("#reqRec tbody").html(html);
+        console.log(req_id);
+      });  
+
+    }
+
+//View Records End
+
+//View MICRO Records
+function viewMicro(i){ //  FOR MICRO POTABLE AND NON-POTABLE FUNCTION
+      // connected to request id
+      var item = testRequestList[i];
+      micro_id = item.req_id; // id for request
+      $("#hiddenViewMicroid").val(i);
+      $("#modalMicro").modal("show");
+      $("span#modalMicro").html("<b>" + item.rwt_num + "</b><br/>" + item.company_name);
+     
+     $.getJSON("/alphalab/api/microResult/index.php?req_id=" + micro_id, function(response){
+        $("#microTable tbody").html("");
+        var html = "";
+        microList = response; //para nd mag-undefined
+        var i = 0;
+        response.map(function(item)
+        {
+          html += "<tr>";
+          html += "<td>" + item.sam_param + "</td>";
+          html += "<td>" + item.sam_place + "</td>";
+          html += "<td>" + item.water_des + " " + item.sample_label + " " + item.sam_point + "</td>"
+          // html += "<td>" + item.tc_potable + "</td>" 
+          // html += "<td>" + item.thc_potable + "</td>" 
+          // html += "<td>" + item.hpc_result + "</td>" 
+          // html += "<td>" + item.ec_result + "</td>"
+
+          // to highlight the failed total coliform results in micro
+            if (item.tc_potable != "<1.1" && item.tc_potable != "N/A") {
+              html += "<td class='failed_color'>" + item.tc_potable + "</td>";
+            }else {
+              html += "<td>" + item.tc_potable + "</td>";
+            }
+
+            // to highlight the failed thermotolerant coliform results in micro
+             if (item.thc_potable != "<1.1" && item.thc_potable != "N/A") {
+              html += "<td class='failed_color'>" + item.thc_potable + "</td>";
+            }else {
+              html += "<td>" + item.thc_potable + "</td>";
+            }
+
+            // to highlight the failed results in micro (included dialysis)
+            if(item.sam_param == 'Dialysis' && (item.hpc_result >= 200 || item.hpc_result == ">6500") ) {
+              html += '<td class="failed_color">' + item.hpc_result + '</td>';
+            }else if (item.sam_param != 'Dialysis' && (item.hpc_result >= 500 || item.hpc_result == ">6500") ) {
+              html += '<td class="failed_color">' + item.hpc_result + '</td>';
+            }else{
+              html += '<td>' + item.hpc_result + '</td>';
+            }
+
+            // to highlight the failed results in e-coli
+            if (item.ec_result == "Positive") {
+              html += '<td class="failed_color">' + item.ec_result + '</td>';
+            }else {
+              html += "<td>" + item.ec_result + "</td>";
+            }
+
+          html += "<td>" + item.micro_analyst + "</td>"
+         
+          // to highlight the hold, Ongoing, Done and Printed results
+          if (item.remarks == 'Hold'){
+            html += '<td><label class="label label-danger">' + item.remarks + '</labe></td>';
+           } else if (item.remarks == 'Ongoing') {
+             html += '<td><label class="label label-info">' + item.remarks + '</labe></td>';
+           } else {
+             html += '<td><label class="label label-success">' + item.remarks + '</labe></td>';
+           }  
+
+          html += "</tr>";
+          i++;
+          }
+          ); //end of function(item)
+          $("#microTable tbody").html(html);
+          }); 
+          }
+
+//View MICRO Records End
+
+
+//View MICRO WASTE Records
+function viewMicroWaste(i){ //  FOR MICRO POTABLE AND NON-POTABLE FUNCTION
+      // connected to request id
+      var item = testRequestList[i];
+      micro_id = item.req_id; // id for request
+      $("#hiddenViewMicroWasteid").val(i);
+      $("#modalMicroWaste").modal("show");
+      micro_count = item.micro_count;
+      test_cat = item.test_cat;
+      console.log("micro count from test request " + item.micro_count);
+      $("span#modalMicroWaste").html("<b>" + item.rwt_num + "</b><br/>" + item.company_name);
+      console.log("test cat " + item.test_cat);
+
+     $.getJSON("/alphalab/api/microResult/index.php?req_id=" + micro_id, function(response){
+        $("#microwasteTable tbody").html("");
+        var html = "";
+        microList = response; //para nd mag-undefined
+        var i = 0;
+        response.map(function(item)
+        {
+          html += "<tr>";
+          html += "<td>" + item.sam_param + "</td>";
+          html += "<td>" + item.water_des + " " + item.sample_label + "</td>"
+          html += "<td>" + item.ec_result + "</td>"
+          html += "<td>" + item.tc_waste + "</td>" 
+          html += "<td>" + item.fc_waste + "</td>"
+          html += "<td>" + item.micro_analyst + "</td>"
+         
+          // to highlight the hold results
+            if (item.remarks == 'Hold'){
+                   html += '<td class="remarks_color">' + item.remarks + '</td></tr>';
+                 } else {
+                   html += '<td>' + item.remarks + '</td></tr>';
+                 }
+
+          html += "</tr>";
+          i++;
+          }
+          ); //end of function(item)
+          $("#microwasteTable tbody").html(html);
+          }); 
+          }
+
+//View MICRO WASTE Records End
+
+
+
+//View Records Pchem
+   function viewPchem(i){
+        // connected to request id
+        var item = testRequestList[i];
+        pw_id = item.req_id; // id for request
+        $("#hiddenViewPchem").val(i);
+        $("#modalPchem").modal("show");
+        // request id end
+        $("span#modalPchem").html("<b>" + item.rwt_num + "</b><br/>" + item.company_name + "<span class='pull-right' style='color: #c9e9ba;'>Status:  " + item.state + "</span>");// Set Title to Bootstrap modal title
+     $.getJSON("/alphalab/api/pchemResult/index.php?req_id=" + pw_id, function(response){
+        $("#pchemTable tbody").html("");
+        var html = "";
+        pchemList = response;
+        var i = 0;
+        response.map(function(item)
+        {
+          html += "<tr>";
+          html += "<td>" + item.water_despw + " " + item.sample_labelpw + "</td>"
+          html += "<td>" + item.pw_param + "</td>"
+          html += "<td>" + item.pw_met + "</td>"
+          html += "<td>" + item.pw_result + "</td>"
+          html += "<td>" + item.pw_analyst + "</td>"
+          html += "</tr>";
+          i++;
+        }
+        ); //end of function(item)
+        $("#pchemTable tbody").html(html);
+        console.log(pw_id);
+        });
+        }
+
+//View pchem Records End
+
+
+//View waste Records
+function viewWaste(i){
+        // connected to request id
+        var item = testRequestList[i];
+        pw_id = item.req_id; // id for request
+        $("#hiddenViewWaste").val(i);
+        $("#modalWaste").modal("show");
+        // request id end
+        $("span#modalWaste").html("<b>" + item.rwt_num + "</b><br/>" + item.company_name + "<span class='pull-right' style='color: #c9e9ba;'>Status:  " + item.state + "</i>");// Set Title to Bootstrap modal title
+     $.getJSON("/alphalab/api/wasteresult/index.php?req_id=" + pw_id, function(response){
+        $("#wasteTable tbody").html("");
+        var html = "";
+        wasteList = response;
+        var i = 0;
+        response.map(function(item)
+        {
+          html += "<tr>";
+          html += "<td>" + item.water_despw + " " + item.sample_labelpw + "</td>"
+          html += "<td>" + item.pw_param + "</td>"
+          html += "<td>" + item.pw_met + "</td>"
+          html += "<td>" + item.pw_result + "</td>"
+          html += "<td>" + item.pw_analyst + "</td>"
+          html += "</tr>";
+          i++;
+        }
+        ); //end of function(item)
+        $("#wasteTable tbody").html(html);
+        console.log(pw_id);
+        }); 
+        }
+
+
+//View waste Records End
+ </script>

@@ -1,0 +1,637 @@
+
+<input type="radio" name="type" id='v_rwt'> Search by RWT No.
+&nbsp
+<input type="radio" name="type" id='v_rwwt'> Search by RWWT No. <br>
+
+	<div class="form-group Vrwt" hidden="true">
+		<div class="input-group ">
+			<input type="text" class="form-control input-sm" id="viewBy_rwt" name="viewBy_rwt" placeholder="RWT No." maxlength="6" onkeypress="return isNumber(event)" autocomplete="off"> 
+			<span class="input-group-btn">
+			<button type="button" class="btn btn-primary btn-sm" onclick="viewBy_rwt()" id="view_By_rwt" name="view_By_rwt"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+			</span>
+		</div>
+	</div>
+
+	<div class="form-group Vrwwt" hidden="true">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm" id="viewBy_rwwt" name="viewBy_rwwt" placeholder="RWWT No." maxlength="4" onkeypress="return isNumber(event)" autocomplete="off"> 
+			<span class="input-group-btn">
+			<button type="button" class="btn btn-primary btn-sm" onclick="viewBy_rwwt()" id="view_By_rwwt" name="view_By_rwwt"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+			</span>
+		</div>
+	</div>
+
+<hr>
+
+<div class="info_text" hidden="true">
+  <div class="row">
+      <div class="col-sm-6">
+        ID NUMBER: <b class="id_num"><span id="id_num"></span></b>
+        <br>
+        COMPANY NAME: <b class="c_name"><span id="c_name"></span></b>
+        <br>
+        NAME OF CLIENT: <b class="c_owner"><span id="c_owner"></span></b> 
+        <br>
+        ADDRESS: <b class="c_add"><span id="c_add"></span></b> 
+        <br>
+        DATE RECEIVED: <b class="date_recvd"><span id="date_recvd"></span></b>
+      </div>
+      <div class="col-sm-6">
+        <br>
+        RWT/RWWT No.: <b class="rwtrwwt_no"><span id="rwtrwwt_no"></span></b>
+        <br>
+        SUBMITTED BY: <b class="submitted_by"><span id="submitted_by"></span></b> 
+        <br>
+        CONTACT NO.: <b class="contact_num"><span id="contact_num"></span></b> 
+        <br>
+       EMAIL ADD.: <b class="email_add"><span id="email_add"></span></b> 
+      </div>
+  </div>
+  <hr>
+</div>
+
+
+
+<img src="image/v-loader.gif" id="v-loader" alt="Loading.." style="display:none" />
+
+<div class="potable" hidden="true">
+<div class="col-sm-6">
+ <label class="header_color">• MICROBIOLOGICAL TEST RESULTS</label>
+ <div class="tableFixHead" id="microTBL">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="10%">Sample Type</th>
+            <th width="15%">Sample Desc.</th>
+            <th width="5%">TC-P</th>
+            <th width="5%">ThC-P</th>
+            <th width="5%">HPC</th>
+            <th width="5%">EC</th>
+            <th width="3%">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+</div>
+
+<div class="col-sm-6">
+ <label class="header_color">• PHYSICOCHEMICAL TEST RESULTS</label><b><span class="pull-right" id="pchem_status"></span></b>
+ <div class="tableFixHead" id="pchemTBL">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="18%">Sample Desc.</th>
+            <th width="8%">Parameters</th>
+            <th width="10%">Method</th>
+            <th width="18%">Result</th>
+            <th width="5%">Analyst</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+</div>
+</div>
+
+<div class="non-potable" hidden="true">
+<div class="col-sm-6">
+ <label class="header_color">• MICROBIOLOGICAL TEST RESULTS FOR WASTEWATER</label>
+ <div class="tableFixHead" id="microwasteTBL">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="15%">Sample Desc.</th>
+            <th width="5%">EC</th>
+            <th width="10%">Total Coliform</th>
+            <th width="10%">Fecal Coliform</th>
+            <th width="3%">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+</div>
+
+<div class="col-sm-6">
+ <label class="header_color">• ANALYTICAL TEST RESULTS FOR WASTEWASTER</label><b><span class="pull-right" id="waste_status"></span></b>
+ <div class="tableFixHead" id="wasteTBL">
+        <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="18%">Sample Desc.</th>
+            <th width="8%">Parameters</th>
+            <th width="10%">Method</th>
+            <th width="18%">Result</th>
+            <th width="5%">Analyst</th>
+          </tr>
+        </thead>
+        <tbody>
+      </tbody>
+      </table>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript" src="script/fixedHeader.js"></script> 
+<script type="text/javascript">
+// click enter
+  $("#viewBy_rwt").keyup(function(event) {
+    if (event.keyCode === 13) {         // 13 = enter 
+        $("#view_By_rwt").click();
+    }
+  });
+
+   $("#viewBy_rwwt").keyup(function(event) {
+    if (event.keyCode === 13) {         // 13 = enter 
+        $("#view_By_rwwt").click();
+    }
+  });
+// click enter end
+
+// RWT field non-numeric disabler
+	function isNumber(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57))
+            return false;
+
+        return true;
+    }    
+// RWT field non-numeric disabler end
+
+
+	$(function() {
+    $('#v_rwwt').click(function() {
+    	clrflds();
+    	$('.Vrwt').attr('hidden',true);
+      $('.Vrwwt').attr('hidden',false);
+    });           
+    $('#v_rwt').click(function() {
+    	clrflds();
+    	$('.Vrwwt').attr('hidden',true);
+      $('.Vrwt').attr('hidden',false);
+    });
+	});
+
+	function clrflds(){
+	   	$("#microTBL tbody").html("");
+    	$("#pchemTBL tbody").html("");
+    	$("#microwasteTBL tbody").html("");
+    	$("#wasteTBL tbody").html("");
+    	$("#viewBy_rwt").val("");
+    	$("#viewBy_rwwt").val("");
+      $('.info_text').attr('hidden',true);
+    	$('.non-potable').attr('hidden',true);
+    	$('.potable').attr('hidden',true);
+      clr_info();
+	}
+
+  function clr_info(){
+      $("#id_num").html("");
+      $("#rwtrwwt_no").html("");
+      $("#submitted_by").html("");
+      $("#contact_num").html("");
+      $("#email_add").html("");
+      $("#c_name").html("");
+      $("#c_owner").html("");
+      $("#c_add").html("");
+      $("#date_recvd").html("");
+      $("#pchem_status").html("");
+      $("#waste_status").html("");
+  }
+
+  function clrflds2(){
+      $("#microTBL tbody").html("");
+      $("#pchemTBL tbody").html("");
+      $("#microwasteTBL tbody").html("");
+      $("#wasteTBL tbody").html("");
+      $('.info_text').attr('hidden',true);
+      $('.non-potable').attr('hidden',true);
+      $('.potable').attr('hidden',true);
+  }
+
+	function viewBy_rwt(){
+    $("#microTBL, #pchemTBL").scrollTop(0);
+    clrflds2();
+    clr_info();
+		var rwt_len = $('#viewBy_rwt').val().length;
+		if( rwt_len != 6){
+				  swal('Invalid input of RWT');
+				  return false;
+				  exit();
+				}
+				else{
+          $("#v-loader").show();
+          v_loader();
+
+          setTimeout(function(){
+            $('.potable').attr('hidden',false);
+            $('.info_text').attr('hidden',false);
+          }, 510); 
+
+					fetch_micro();
+					fetch_pchem();
+         
+					return false;
+				}
+		
+	}
+
+	function viewBy_rwwt(){
+    $("#microwasteTBL, #wasteTBL").scrollTop(0);
+    clrflds2();
+    clr_info();
+		var rwt_len = $('#viewBy_rwwt').val().length;
+		if( rwt_len != 4){
+				  swal('Invalid input of RWWT');
+				  return false;
+				  exit();
+				}
+				else{
+        $("#v-loader").show();
+        v_loader();
+
+        setTimeout(function(){
+					$('.non-potable').attr('hidden',false);
+          $('.info_text').attr('hidden',false);
+        }, 510); 
+
+					fetch_microwaste();
+					fetch_waste();
+         
+					return false;
+				}
+		
+	}
+
+ function v_loader(){
+    setTimeout(function(){
+        $("#v-loader").hide();
+    }, 500); 
+ }
+
+// FETCH POTABLE MICRO
+	function fetch_micro(){
+    var searchby_rwt = $('#viewBy_rwt').val();
+    $.ajax({
+      url:"/alphalab/api/viewBy_rwt/view_micro.php",
+      method:"GET",  
+      dataType:"json",
+      data: {
+        search:searchby_rwt
+      },
+      success: function(data){
+        console.log(data);
+
+        if (data.success) {
+          var dataArr = data.success.data;
+          var html = "";
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+          // datafound = data.success.company_name;
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].sam_param + "</td>";
+            html += "<td>" + dataArr[i].water_des + " "
+                           + dataArr[i].sample_label + " "
+                           + dataArr[i].sam_point + "</td>";
+            
+            // to highlight the failed total coliform results in micro
+            if (dataArr[i].tc_potable != "<1.1" && dataArr[i].tc_potable != "N/A") {
+              html += "<td class='failed_color'>" + dataArr[i].tc_potable + "</td>";
+            }else {
+              html += "<td>" + dataArr[i].tc_potable + "</td>";
+            }
+
+            // to highlight the failed thermotolerant coliform results in micro
+             if (dataArr[i].thc_potable != "<1.1" && dataArr[i].thc_potable != "N/A") {
+              html += "<td class='failed_color'>" + dataArr[i].thc_potable + "</td>";
+            }else {
+              html += "<td>" + dataArr[i].thc_potable + "</td>";
+            }
+
+           // to highlight the failed results in micro (included dialysis)
+            if(dataArr[i].sam_param == 'Dialysis' && (dataArr[i].hpc_result >= 200 || dataArr[i].hpc_result == ">6500") ) {
+              html += '<td class="failed_color">' + dataArr[i].hpc_result + '</td>';
+            }else if (dataArr[i].sam_param != 'Dialysis' && (dataArr[i].hpc_result >= 500 || dataArr[i].hpc_result == ">6500") ) {
+              html += '<td class="failed_color">' + dataArr[i].hpc_result + '</td>';
+            }else{
+              html += '<td>' + dataArr[i].hpc_result + '</td>';
+            }
+
+            // to highlight the failed results in e-coli
+            if (dataArr[i].ec_result == "Positive") {
+              html += '<td class="failed_color">' + dataArr[i].ec_result + '</td>';
+            }else {
+              html += "<td>" + dataArr[i].ec_result + "</td>";
+            }
+            
+
+            // to highlight the hold results
+            if (dataArr[i].remarks == 'Hold'){
+                   html += '<td><label class="label label-danger">' + dataArr[i].remarks + '</label></td>';
+            }else if(dataArr[i].remarks == 'Ongoing'){
+                   html += '<td><label class="label label-info">' + dataArr[i].remarks + '</label></td>';
+            }else {
+                 html += '<td><label class="label label-success">' + dataArr[i].remarks + '</label></td>';
+            }
+
+            html += "</tr>";
+
+             id_num = "<span>" + dataArr[i].id_num + "</span>";
+            $("#id_num").html(id_num);
+
+             c_name = "<span>" + dataArr[i].company_name + "</span>";
+            $("#c_name").html(c_name);
+
+             c_owner = "<span>" + dataArr[i].client_name + "</span>";
+            $("#c_owner").html(c_owner);
+
+             c_add = "<span>" + dataArr[i].add_st + " "
+             				  + dataArr[i].add_city + " "
+             				  + dataArr[i].add_prov + 
+             		 "</span>";
+            $("#c_add").html(c_add);
+
+             date_recvd = "<span>" + dataArr[i].date_rcvd + "</span>";
+            $("#date_recvd").html(date_recvd);
+
+             rwtrwwt_no = "<span>" + dataArr[i].rwt_num + "</span>";
+            $("#rwtrwwt_no").html(rwtrwwt_no);
+
+             submitted_by = "<span>" + dataArr[i].fsa + "</span>";
+            $("#submitted_by").html(submitted_by);
+
+            contact_num = "<span>" + dataArr[i].contact + "</span>";
+            $("#contact_num").html(contact_num);
+
+            email_add = "<span>" + dataArr[i].email_add + "</span>";
+            $("#email_add").html(email_add);
+          
+             }
+          $("#microTBL tbody").html(html);
+       
+        }
+          else{
+           html += "<td colspan='7'>" + "No Record(s) Found" + "</td>";
+           $("#microTBL tbody").html(html);
+           
+        }
+       
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+
+// FETCH POTABLE PCHEM
+  function fetch_pchem(){
+    var searchby_rwt = $('#viewBy_rwt').val();
+    $.ajax({
+      url:"/alphalab/api/viewBy_rwt/view_pchem.php",
+      method:"GET",  
+      dataType:"json",
+      data: {
+        search:searchby_rwt
+      },
+      success: function(data){
+        console.log(data);
+
+        if (data.success) {
+          var dataArr = data.success.data;
+          var html = "";
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+          // datafound = data.success.company_name;
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].water_despw + " " + dataArr[i].sample_labelpw + "</td>";
+            html += "<td>" + dataArr[i].pw_param + "</td>";
+            html += "<td>" + dataArr[i].pw_met + "</td>";
+            html += "<td>" + dataArr[i].pw_result + "</td>";
+            html += "<td>" + dataArr[i].pw_analyst + "</td>";
+            html += "</tr>";
+
+              id_num = "<span>" + dataArr[i].id_num + "</span>";
+            $("#id_num").html(id_num);
+
+              c_name = "<span>" + dataArr[i].company_name + "</span>";
+            $("#c_name").html(c_name);
+
+             c_owner = "<span>" + dataArr[i].client_name + "</span>";
+            $("#c_owner").html(c_owner);
+
+             c_add = "<span>" + dataArr[i].add_st + " "
+             				  + dataArr[i].add_city + " "
+             				  + dataArr[i].add_prov + 
+             		 "</span>";
+            $("#c_add").html(c_add);
+
+             date_recvd = "<span>" + dataArr[i].date_rcvd + "</span>";
+            $("#date_recvd").html(date_recvd);
+
+            rwtrwwt_no = "<span>" + dataArr[i].rwt_num + "</span>";
+            $("#rwtrwwt_no").html(rwtrwwt_no);
+
+             submitted_by = "<span>" + dataArr[i].fsa + "</span>";
+            $("#submitted_by").html(submitted_by);
+
+            contact_num = "<span>" + dataArr[i].contact + "</span>";
+            $("#contact_num").html(contact_num);
+
+            email_add = "<span>" + dataArr[i].email_add + "</span>";
+            $("#email_add").html(email_add);
+
+             pchem_status = "<span>" + dataArr[i].state + "</span>";
+            $("#pchem_status").html("STATUS: " + pchem_status);
+          
+             }
+          $("#pchemTBL tbody").html(html);
+       
+        }
+          else{
+           html += "<td colspan='5'>" + "No Record(s) Found" + "</td>";
+           $("#pchemTBL tbody").html(html);
+           
+        }
+       
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+
+
+
+  // FETCH MICRO WASTE
+	function fetch_microwaste(){
+    var searchby_rwwt = $('#viewBy_rwwt').val();
+    $.ajax({
+      url:"/alphalab/api/viewBy_rwt/view_microwaste.php",
+      method:"GET",  
+      dataType:"json",
+      data: {
+        search:searchby_rwwt
+      },
+      success: function(data){
+        console.log(data);
+
+        if (data.success) {
+          var dataArr = data.success.data;
+          var html = "";
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+          // datafound = data.success.company_name;
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].water_des + " "
+                           + dataArr[i].sample_label + " "
+                           + dataArr[i].sam_point + "</td>";
+            html += "<td>" + dataArr[i].ec_result + "</td>";
+            html += "<td>" + dataArr[i].tc_waste + "</td>";
+            html += "<td>" + dataArr[i].fc_waste + "</td>";
+            html += "<td>" + dataArr[i].remarks + "</td>";
+            html += "</tr>";
+
+             id_num = "<span>" + dataArr[i].id_num + "</span>";
+            $("#id_num").html(id_num);
+
+             c_name = "<span>" + dataArr[i].company_name + "</span>";
+            $("#c_name").html(c_name);
+
+             c_owner = "<span>" + dataArr[i].client_name + "</span>";
+            $("#c_owner").html(c_owner);
+
+             c_add = "<span>" + dataArr[i].add_st + " "
+             				  + dataArr[i].add_city + " "
+             				  + dataArr[i].add_prov + 
+             		 "</span>";
+            $("#c_add").html(c_add);
+
+             date_recvd = "<span>" + dataArr[i].date_rcvd + "</span>";
+            $("#date_recvd").html(date_recvd);
+
+             rwtrwwt_no = "<span>" + dataArr[i].rwt_num + "</span>";
+            $("#rwtrwwt_no").html(rwtrwwt_no);
+
+             submitted_by = "<span>" + dataArr[i].fsa + "</span>";
+            $("#submitted_by").html(submitted_by);
+
+            contact_num = "<span>" + dataArr[i].contact + "</span>";
+            $("#contact_num").html(contact_num);
+
+            email_add = "<span>" + dataArr[i].email_add + "</span>";
+            $("#email_add").html(email_add);
+          
+             }
+          $("#microwasteTBL tbody").html(html);
+       
+        }
+          else{
+           html += "<td colspan='5'>" + "No Record(s) Found" + "</td>";
+           $("#microwasteTBL tbody").html(html);
+           
+        }
+       
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+
+// FETCH WASTE
+  function fetch_waste(){
+    var searchby_rwwt = $('#viewBy_rwwt').val();
+    $.ajax({
+      url:"/alphalab/api/viewBy_rwt/view_waste.php",
+      method:"GET",  
+      dataType:"json",
+      data: {
+        search:searchby_rwwt
+      },
+      success: function(data){
+        console.log(data);
+
+        if (data.success) {
+          var dataArr = data.success.data;
+          var html = "";
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+          // datafound = data.success.company_name;
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            html += "<td>" + dataArr[i].water_despw + " " + dataArr[i].sample_labelpw + "</td>";
+            html += "<td>" + dataArr[i].pw_param + "</td>";
+            html += "<td>" + dataArr[i].pw_met + "</td>";
+            html += "<td>" + dataArr[i].pw_result + "</td>";
+            html += "<td>" + dataArr[i].pw_analyst + "</td>";
+            html += "</tr>";
+
+             id_num = "<span>" + dataArr[i].id_num + "</span>";
+            $("#id_num").html(id_num);
+
+             c_name = "<span>" + dataArr[i].company_name + "</span>";
+            $("#c_name").html(c_name);
+
+             c_owner = "<span>" + dataArr[i].client_name + "</span>";
+            $("#c_owner").html(c_owner);
+
+             c_add = "<span>" + dataArr[i].add_st + " "
+             				  + dataArr[i].add_city + " "
+             				  + dataArr[i].add_prov + 
+             		 "</span>";
+            $("#c_add").html(c_add);
+
+             date_recvd = "<span>" + dataArr[i].date_rcvd + "</span>";
+            $("#date_recvd").html(date_recvd);
+
+             rwtrwwt_no = "<span>" + dataArr[i].rwt_num + "</span>";
+            $("#rwtrwwt_no").html(rwtrwwt_no);
+
+             submitted_by = "<span>" + dataArr[i].fsa + "</span>";
+            $("#submitted_by").html(submitted_by);
+
+            contact_num = "<span>" + dataArr[i].contact + "</span>";
+            $("#contact_num").html(contact_num);
+
+            email_add = "<span>" + dataArr[i].email_add + "</span>";
+            $("#email_add").html(email_add);
+
+             waste_status = "<span>" + dataArr[i].state + "</span>";
+            $("#waste_status").html("STATUS: " + waste_status);
+          
+             }
+          $("#wasteTBL tbody").html(html);
+       
+        }
+          else{
+           html += "<td colspan='5'>" + "No Record(s) Found" + "</td>";
+           $("#wasteTBL tbody").html(html);
+           
+        }
+       
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+
+</script>
+
+
+

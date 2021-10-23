@@ -1,0 +1,448 @@
+
+<h4 class="bg_color_clnt"><span class="text_pad">Clients Dashboard</span></h4>
+<hr>
+ <div class="form-inline">
+   <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="From" name="From" placeholder="From date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> <strong>--</strong>
+  <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="to" name="to" placeholder="To date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> &nbsp &nbsp
+    <button type="button" class="btn btn-primary btn-sm" onclick="numTest_City();" id="rangeDash_city" name="rangeDash_city"><i class="fa fa-filter" aria-hidden="true"></i> Filter Search</button> 
+ </div>
+
+<!--     <div id="numClients_">
+        <canvas id="numClients"></canvas> 
+    </div> -->
+<br/>
+<br/>
+    <div id="byCity_">
+        <canvas id="byCity"></canvas> 
+    </div>
+<br/>
+<br/>
+    <div id="byWRS_">
+        <canvas id="byWRS"></canvas> 
+    </div>
+<br/>
+<br/>
+    <div id="byCompany_">
+        <canvas id="byCompany"></canvas> 
+    </div>
+
+<script type="text/javascript" src="script/datepickerFromTo.js"></script> 
+<script type="text/javascript" src="script/scrollOnTop.js"></script> 
+
+<script type="text/javascript">
+
+  // numClients();
+
+  // function numClients(){
+  //       $(document).ready(function(){
+  //         var date_start = $('#From').val();
+  //           var date_end = $('#to').val();
+      
+  //           // if(date_start != '' && date_end != '')
+  //           // {
+  //           $.ajax({
+  //               url: "/alphalab/api/dataGraph/dash_client/num_clients.php?",
+  //               method:"GET", 
+  //               dataType: 'json',
+  //               // data:{
+  //               //   From:date_start, 
+  //               //   to:date_end 
+  //               // },
+  //               success: function(res) {
+  //                   console.log(res);
+  //                   var graphLabels = [],
+  //                       graphData = [];
+  //                   for(var i=0;i<res.length;i++){
+  //                       graphData.push(res[i].num_clients);
+  //                       graphLabels.push(res[i].add_prov);
+  //                   }
+  //                   //Make a call to the function to draw the bar graph
+  //                   drawGraph(graphLabels, graphData);
+  //               },
+  //               complete: function() {
+  //                   console.log("AJAX request done");
+  //               },
+  //               error: function() {
+  //                   console.log("Error occurred during AJAX request")
+  //               }               
+  //           });
+
+  //   function drawGraph(Labels, Data){
+  //       // to clear previous grap when hover
+  //       document.getElementById("numClients_").innerHTML = '&nbsp;';
+  //       document.getElementById("numClients_").innerHTML = '<canvas id="numClients"></canvas>';
+  //       // to clear previous grap when hover end
+  //         var numClients = document.getElementById("numClients").getContext('2d');
+  //         var numClients_ = new Chart(numClients, {
+  //            type: 'doughnut',
+  //               data: {
+  //                   labels: Labels,
+  //                   datasets: [{
+  //                       // label: 'Total number of test per Micro Analyst',
+  //                       // label: 'test1',
+  //                       data: Data,
+  //                       backgroundColor: ['#003f5c','#2f4b7c', '#665191','#a05195', '#f95d6a','#ff7c43', '#ffa600','#42f4dc','#50ed84','#f2e230','#48d691'],
+  //                       borderWidth: 1
+  //                   }]
+  //               },
+
+  //               options: {
+  //                   title: {
+  //                     display: true,
+  //                     text: 'Total numbers of Clients'
+  //                   },
+  //                   plugins: {
+  //                     datalabels: {
+  //                       color: '#FF00FF',
+  //                       anchor: 'center',
+  //                       align: 'end',
+  //                       formatter: Math.round,
+  //                       font: {
+  //                         weight: 'bold'
+  //                       }
+  //                     }
+  //                   }
+  //               }
+  //       });  
+  //   }
+  //   });
+  //   }
+
+    function numTest_City(){
+        check_session();
+        $(document).ready(function(){
+          var date_start = $('#From').val();
+          var date_end = $('#to').val();
+      
+            if(date_start != '' && date_end != '')
+            {
+            // per MUNICIPALITY (ALL CLIENTS)
+            $.ajax({
+                url: "/alphalab/api/dataGraph/dash_client/numTest_Municipality.php?",
+                method:"GET", 
+                dataType: 'json',
+                data:{
+                  From:date_start, 
+                  to:date_end 
+                },
+                success: function(res) {
+                    console.log(res);
+
+                    var graphData_m = [],
+                        graphLabel_add = [],
+                        graphData_p = [],
+                        graphData_w = [];
+                    for(var i=0;i<res.length;i++){
+                        graphLabel_add.push(res[i].add_city + ' ' + res[i].add_prov);
+                        graphData_m.push(res[i].m_count);
+                        graphData_p.push(res[i].p_count);
+                        graphData_w.push(res[i].w_count);
+                    }
+
+                    //Make a call to the function to draw the bar graph
+                    drawGraph_percity(graphLabel_add, graphData_m, graphData_p, graphData_w);
+                },
+                complete: function() {
+                    console.log("AJAX request done");
+                },
+                error: function() {
+                    console.log("Error occurred during AJAX request")
+                }               
+            });
+
+            // per MUNICIPALITY (WRS)
+            $.ajax({
+                url: "/alphalab/api/dataGraph/dash_client/numTest_wrs.php?",
+                method:"GET", 
+                dataType: 'json',
+                data:{
+                  From:date_start, 
+                  to:date_end 
+                },
+                success: function(res) {
+                    console.log(res);
+
+                    var graphData_m = [],
+                        graphLabel_add = [],
+                        graphData_p = [];
+                        // graphData_w = [];
+                    for(var i=0;i<res.length;i++){
+                        graphLabel_add.push(res[i].add_city + ' ' + res[i].add_prov);
+                        graphData_m.push(res[i].m_count);
+                        graphData_p.push(res[i].p_count);
+                        // graphData_w.push(res[i].w_count);
+                    }
+
+                    //Make a call to the function to draw the bar graph
+                    drawGraph_percity_wrs(graphLabel_add, graphData_m, graphData_p);
+                },
+                complete: function() {
+                    console.log("AJAX request done");
+                },
+                error: function() {
+                    console.log("Error occurred during AJAX request")
+                }               
+            });
+
+            // per MUNICIPALITY (COMPANY)
+            $.ajax({
+                url: "/alphalab/api/dataGraph/dash_client/numTest_company.php?",
+                method:"GET", 
+                dataType: 'json',
+                data:{
+                  From:date_start, 
+                  to:date_end 
+                },
+                success: function(res) {
+                    console.log(res);
+
+                    var graphData_m = [],
+                        graphLabel_add = [],
+                        graphData_p = [],
+                        graphData_w = [];
+                    for(var i=0;i<res.length;i++){
+                        graphLabel_add.push(res[i].add_city + ' ' + res[i].add_prov);
+                        graphData_m.push(res[i].m_count);
+                        graphData_p.push(res[i].p_count);
+                        graphData_w.push(res[i].w_count);
+                    }
+
+                    //Make a call to the function to draw the bar graph
+                    drawGraph_percity_company(graphLabel_add, graphData_m, graphData_p, graphData_w);
+                },
+                complete: function() {
+                    console.log("AJAX request done");
+                },
+                error: function() {
+                    console.log("Error occurred during AJAX request")
+                }               
+            });
+
+
+
+            }
+            else{
+              swal("Please fill all field");
+            }
+        }); 
+        
+        // per MUNICIPALITY (ALL CLIENTS) - GRAPH
+        function drawGraph_percity(Labels, data_m_count, data_p_count, data_w_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byCity_").innerHTML = '&nbsp;';
+            document.getElementById("byCity_").innerHTML = '<canvas id="byCity"></canvas>';
+            // to clear previous grap when hover end
+              var byCity = document.getElementById("byCity");
+              byCity.height = 650;
+              var byCity_ = new Chart(byCity, {
+
+                type: 'horizontalBar',
+
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Waste Count',
+                        data: data_w_count,
+                        backgroundColor:'#009b77',
+                        borderWidth: 1
+                    }   
+                    ]
+
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'No. of Analyses per Municipality (ALL CLIENTS)',
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#FF00FF',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    }
+            });  
+        }
+
+        // per MUNICIPALITY (WRS) - GRAPH
+        function drawGraph_percity_wrs(Labels, data_m_count, data_p_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byWRS_").innerHTML = '&nbsp;';
+            document.getElementById("byWRS_").innerHTML = '<canvas id="byWRS"></canvas>';
+            // to clear previous grap when hover end
+              var byWRS = document.getElementById("byWRS");
+              byWRS.height = 450;
+              var byWRS_ = new Chart(byWRS, {
+
+                type: 'horizontalBar',
+
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    }  
+                    ]
+
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'No. of Analyses per Municipality (WRS)',
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#FF00FF',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    }
+            });  
+        }
+
+        // per MUNICIPALITY (COMPANY) - GRAPH
+        function drawGraph_percity_company(Labels, data_m_count, data_p_count, data_w_count){
+          // to clear previous grap when hover
+           
+            document.getElementById("byCompany_").innerHTML = '&nbsp;';
+            document.getElementById("byCompany_").innerHTML = '<canvas id="byCompany"></canvas>';
+            // to clear previous grap when hover end
+              var byCompany = document.getElementById("byCompany");
+              byCompany.height = 450;
+              var byCompany_ = new Chart(byCompany, {
+
+                type: 'horizontalBar',
+
+                data: {
+                    labels: Labels,
+                    datasets: [{    
+                        label: 'Micro Count',
+                        data: data_m_count,
+                        backgroundColor: '#0479cc',
+                        borderWidth: 1
+
+                    },
+                    {
+                        label: 'Pchem Count',
+                        data: data_p_count,
+                        backgroundColor:'#9c9dc9',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Waste Count',
+                        data: data_w_count,
+                        backgroundColor:'#009b77',
+                        borderWidth: 1
+                    }   
+                    ]
+
+                },
+                options: {
+                    layout: {
+                        padding: { // to adjust padding to the left to show the numbers
+                            left: 0,
+                            right: 50,
+                            top: 0,
+                            bottom: 0
+                        }
+                    },
+                    title: {
+                      display: true,
+                      text: 'No. of Analyses per Municipality (COMPANY)',
+                        scales: {
+                            yAxes: [{
+                                ticks: {    
+                                    autoSkip: false,
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: '#FF00FF',
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                    }
+            });  
+        }
+
+    }
+
+</script>

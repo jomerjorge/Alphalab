@@ -1,0 +1,338 @@
+<div class="form-inline">
+
+  <div class="input-group">
+  <input size="8" type="text" class="form-control input-sm" id="From" name="From" placeholder="From date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> 
+
+  <strong>--</strong>
+
+  <div class="input-group">
+  <input size="8" type="text" class="form-control input-sm" id="to" name="to" placeholder="To date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> &nbsp &nbsp
+
+    <input size="12" type="text" class="form-control input-sm" name="search_by_company_name" id="search_by_company_name" placeholder="Company/Owner" autocomplete="off" > &nbsp
+
+    <input size="12" type="text" class="form-control input-sm" name="search_by_address" id="search_by_address" placeholder="Address" autocomplete="off" > &nbsp
+
+    <!-- FSA -->
+    <select class="form-control input-sm" id="fsa" name="fsa"></select>
+
+    <!-- Analyst -->
+    <select class="form-control input-sm" id="microAnalyst_ddlist" name="microAnalyst_ddlist"></select>
+
+   <select class="form-control input-sm" id="search_by_bstyle" name="search_by_bstyle">
+      <option value="" >< Select Business Style ></option>
+      <option value="WRS">WRS</option>
+      <option value="Hospital">Hospital</option>
+      <option value="Waterworks">Waterworks</option>
+      <option value="Food Establishment">Food Establishment</option>
+      <option value="Industrial">Industrial</option>
+      <option value="Land Developer">Land Developer</option>
+      <option value="Mall">Mall</option>
+      <option value="School">School</option>
+      <option value="Residential">Residential</option>
+      <option value="Resort">Resort</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <button type="button" class="btn btn-primary btn-sm" id="rangeRep_mw" name="rangeRep_mw"><i class="fa fa-filter" aria-hidden="true"></i> Filter Search</button> &nbsp &nbsp
+
+  <button type="button" class="btn btn-success btn-sm pull-right" onclick="rep_mwExport_excel()" id="rep_mwExport_excel" name="repExport_excel"><i class="fa fa-file-excel-o" aria-hidden="true"></i>&nbsp Export</button>
+
+</div>
+<br/>
+<span class="alert-info">Note: Only Test Results with <b>"Done", "Printed", and "Hold"</b> status will be displayed.</span>
+    <div class="tableFixHead" id="report_tbl_mc">
+      <table class="table table-bordered">
+      <thead>
+        <tr>
+            <th width="5%">Status</th>
+            <th width="5%">Sample Type</th>
+            <th width="5%">TC-P</th>
+            <th width="5%">ThC-P</th>
+            <th width="5%">HPC</th>
+            <th width="5%">EC</th>
+            <th width="5%">TC-W</th>
+            <th width="5%">FC-W</th>
+            <th width="5%">Remarks</th>
+            <th width="8%">Water Desc.</th>
+            <th width="8%">Date Received</th>
+            <th width="5%">Rwt/Rwwt No.</th>
+            <th width="10%">Company Name</th>
+            <th width="10%">Client Name</th>
+            <th width="8%">City</th>
+            <th width="8%">Province</th>
+            <th width="8%">Contact</th>
+            <th width="8%">Analyst</th>
+            <th width="8%">Date Encoded</th>
+            <th width="8%">Date Printed</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+      </table>
+    </div>
+<br />
+<br />
+
+  <div>
+      Page: <b><span id="page"></span></b> of <b><span id="pagenum"></span></b> &nbsp
+      Record(s) Found: <b><span id="recFound"></span></b> &nbsp
+      Total Records: <b><span id="totalrecord"></span></b> &nbsp 
+      <button class="btn btn-xs btn-primary prev-btn" id="prevBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+      <button class="btn btn-xs btn-primary next-btn" id="nextBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+      
+  </div>
+
+ <script type="text/javascript" src="script/fsa_analyst_ddlist.js"></script> 
+ <script type="text/javascript" src="script/datepickerFromTo.js"></script> 
+ <script type="text/javascript" src="script/fixedHeader.js"></script> 
+
+ <script type="text/javascript">
+
+function rep_mwExport_excel(){
+      check_session();
+      var searchByComp = $('#search_by_company_name').val(); 
+      var searchByAddress = $('#search_by_address').val();
+      var searchByAnalyst_mc = $('#microAnalyst_ddlist').val();
+      var searchByFsa = $('#fsa').val();
+      var searchByBstyle = $('#search_by_bstyle').val();
+      var date_start = $('#From').val();
+      var date_end = $('#to').val();  
+
+  document.location.href = '/alphalab/api/reporting/exportExcel_mw.php?search_comp='+ searchByComp +
+                           '&search_add=' + searchByAddress + 
+                           '&search_analyst_mc=' + searchByAnalyst_mc + 
+                           '&search_fsa=' + searchByFsa +  
+                           '&search_bstyle=' + searchByBstyle + 
+                           '&From=' + date_start + 
+                           '&to=' + date_end ;
+}
+
+
+ $(document).ready(function(){
+  $('#rangeRep_mw').click(function(){
+    check_session();
+    page = 1;
+    var date_start = $('#From').val();
+    var date_end = $('#to').val();
+    var searchByComp = $('#search_by_company_name').val();
+    var searchByAddress = $('#search_by_address').val();
+    var searchByAnalyst_mc = $('#microAnalyst_ddlist').val();
+    var searchByFsa = $('#fsa').val();
+    var searchByBstyle = $('#search_by_bstyle').val();
+
+    if(date_start != '' && date_end != '')
+    {
+      $.ajax({
+        url:"/alphalab/api/reporting/rep_pagination_mw.php",  
+        method:"GET",  
+        dataType: "json",
+        data:{
+          search_comp:searchByComp,
+          search_add:searchByAddress,
+          search_analyst_mc:searchByAnalyst_mc,
+          search_fsa:searchByFsa,
+          search_bstyle:searchByBstyle,
+          From:date_start, 
+          to:date_end
+        },
+        success:function(data){
+        console.log(data);
+        fetch_data_mc_report(data);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+      });
+    }
+    else
+    {
+      swal("Please Select the Date");
+    }
+  });
+});
+
+
+  //page buttons
+  $(document).ready(function(){
+    page = 1;
+    pagelimit = 40;
+    datafound = 0;
+
+  // fetchData();
+
+  $(".prev-btn").on("click", function(){
+    if (page > 1) { 
+      page--;
+    fetchData();
+    
+    }
+    console.log("Prev Page: " + page);
+  });
+
+  $(".next-btn").on("click", function(){
+    if (page * pagelimit < datafound) {
+    page++;
+    fetchData();
+     
+    }
+    console.log("Next Page: " + page);
+  });
+  
+  // fetch data
+  function fetchData(){
+     var date_start = $("#From").val();
+     var date_end = $("#to").val();
+     var searchByComp = $('#search_by_company_name').val();
+     var searchByAddress = $('#search_by_address').val();
+     var searchByAnalyst_mc = $('#microAnalyst_ddlist').val();
+     var searchByFsa = $('#fsa').val();
+      var searchByBstyle = $('#search_by_bstyle').val();
+    $.ajax({
+      url:"/alphalab/api/reporting/rep_pagination_mw.php",
+      method:"GET",  
+      dataType:"json",
+      data: {
+        page:page,
+        pagelimit:pagelimit,
+        search_comp:searchByComp,
+        search_add:searchByAddress,
+        search_analyst_mc:searchByAnalyst_mc,
+        search_fsa:searchByFsa,
+        search_bstyle:searchByBstyle,
+        From:date_start,
+        to:date_end
+      },
+      success: function(data){
+        console.log(data);
+        fetch_data_mc_report(data);
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+});
+
+//fetch data function
+
+function fetch_data_mc_report(data) {
+
+if (data.success) {
+          $("div.tableFixHead").scrollTop(0); // to return to top when click search
+          var dataArr = data.success.data;
+          totalrecord = data.success.totalrecord;
+          var html = "";
+          datafound = data.success.datafound;
+          pagenum = Math.floor((datafound / pagelimit) + 1); // to get the quotient without decimals
+          // to select the specific client when viewing View Records Tab
+          list = dataArr; 
+
+          for (var i = 0; i < dataArr.length; i++){
+            html += "<tr>";
+            
+             // to highlight the hold, Ongoing, Done and Printed results
+             if (dataArr[i].remarks == 'Hold'){
+                       html += '<td><label class="label label-danger">' + dataArr[i].remarks + '</label></td>';
+                }else if(dataArr[i].remarks == 'Ongoing'){
+                       html += '<td><label class="label label-info">' + dataArr[i].remarks + '</label></td>';
+                }else {
+                     html += '<td><label class="label label-success">' + dataArr[i].remarks + '</label></td>';
+                }
+
+             html += "<td>" + dataArr[i].sam_param + "</td>";
+             
+            // html += "<td>" + dataArr[i].tc_potable + "</td>";
+            // html += "<td>" + dataArr[i].thc_potable + "</td>";
+            // html += "<td>" + dataArr[i].hpc_result + "</td>";
+            // html += "<td>" + dataArr[i].ec_result + "</td>";
+
+            // to highlight the failed total coliform results in micro
+            if (dataArr[i].tc_potable != "<1.1" && dataArr[i].tc_potable != "N/A") {
+              html += "<td class='failed_color'>" + dataArr[i].tc_potable + "</td>";
+            }else {
+              html += "<td>" + dataArr[i].tc_potable + "</td>";
+            }
+
+            // to highlight the failed thermotolerant coliform results in micro
+             if (dataArr[i].thc_potable != "<1.1" && dataArr[i].thc_potable != "N/A") {
+              html += "<td class='failed_color'>" + dataArr[i].thc_potable + "</td>";
+            }else {
+              html += "<td>" + dataArr[i].thc_potable + "</td>";
+            }
+
+           // to highlight the failed results in micro (included dialysis)
+            if(dataArr[i].sam_param == 'Dialysis' && (dataArr[i].hpc_result >= 200 || dataArr[i].hpc_result == ">6500") ) {
+              html += '<td class="failed_color">' + dataArr[i].hpc_result + '</td>';
+            }else if (dataArr[i].sam_param != 'Dialysis' && (dataArr[i].hpc_result >= 500 || dataArr[i].hpc_result == ">6500") ) {
+              html += '<td class="failed_color">' + dataArr[i].hpc_result + '</td>';
+            }else{
+              html += '<td>' + dataArr[i].hpc_result + '</td>';
+            }
+
+            // to highlight the failed results in e-coli
+            if (dataArr[i].ec_result == "Positive") {
+              html += '<td class="failed_color">' + dataArr[i].ec_result + '</td>';
+            }else {
+              html += "<td>" + dataArr[i].ec_result + "</td>";
+            }
+
+
+
+
+            html += "<td>" + dataArr[i].tc_waste + "</td>";
+            html += "<td>" + dataArr[i].fc_waste + "</td>";
+            // html += "<td>" + dataArr[i].remarks + "</td>";
+            if ((dataArr[i].tc_potable != "<1.1" && dataArr[i].tc_potable != "N/A") ||
+                (dataArr[i].thc_potable != "<1.1" && dataArr[i].thc_potable != "N/A") ||
+                (dataArr[i].sam_param == 'Dialysis' && (dataArr[i].hpc_result >= 200 || dataArr[i].hpc_result == ">6500")) ||
+                (dataArr[i].sam_param != 'Dialysis' && (dataArr[i].hpc_result >= 500 || dataArr[i].hpc_result == ">6500")) ||
+                  (dataArr[i].ec_result == "Positive"))
+                {
+                  html += "<td><label class='label label-danger'>Failed</label></td>";
+                }
+                else{
+                  html += "<td>Passed</td>";
+                }
+
+            html += "<td>" + dataArr[i].water_des + " "
+                           + dataArr[i].sample_label + " "
+                           + dataArr[i].sam_point + "</td>";
+            html += "<td>" + dataArr[i].date_rcvd + "</td>";
+            html += "<td>" + dataArr[i].rwt_num + "</td>";
+            html += "<td>" + dataArr[i].company_name + "</td>";
+            html += "<td>" + dataArr[i].client_name + "</td>";
+            html += "<td>" + dataArr[i].add_city + "</td>";
+            html += "<td>" + dataArr[i].add_prov + "</td>";
+            html += "<td>" + dataArr[i].contact + "</td>";
+            html += "<td>" + dataArr[i].micro_analyst + "</td>"; 
+            html += '<td>' + dataArr[i].mc_date_enc + '</td>';
+            html += '<td>' + dataArr[i].mc_date_prnt + '</td>';
+            html += "</tr>";
+             }
+          $("#report_tbl_mc tbody").html(html);
+          $("#recFound").html(datafound);
+          $("#totalrecord").html(totalrecord);
+          $("#page").html(page);
+          $("#pagenum").html(pagenum);
+
+        }
+          else{
+           datafound = 0;  // to reset the paging at 0, :log at f12
+           html += "<td colspan='18'>" + "No Record(s) Found." + "</td>";
+           $("#report_tbl_mc tbody").html(html);
+           $("#totalrecord").html(0);
+           $("#recFound").html(0);
+           $("#page").html(0);
+          $("#pagenum").html(0);
+        }
+
+}
+//fetch data function end 
+        
+</script>

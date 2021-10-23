@@ -1,0 +1,300 @@
+
+<h4 class="bg_color_mw"><span class="text_pad">Microbiological Dashboard</span></h4>
+<hr>
+  <div class="form-inline">
+    <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="From" name="From" placeholder="From date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> <strong>--</strong>
+  <div class="input-group">
+    <input size="12" type="text" class="form-control input-sm" id="to" name="to" placeholder="To date" autocomplete="off"><span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+  </div> &nbsp &nbsp
+    <button type="button" class="btn btn-primary btn-sm" onclick="microAnalyst();" id="rangeDash_micro" name="rangeDash_micro"><i class="fa fa-filter" aria-hidden="true"></i> Filter Search</button> 
+ </div>
+
+
+    <div id="microAnalyst_">
+        <canvas id="microAnalyst"></canvas> 
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div id="microTest_count_">
+        <canvas id="microTest_count"></canvas> 
+    </div>
+
+
+<script type="text/javascript" src="script/datepickerFromTo.js"></script>
+<script type="text/javascript" src="script/scrollOnTop.js"></script> 
+
+<script type="text/javascript">
+
+function microAnalyst(){
+        check_session();
+        $(document).ready(function(){
+          var date_start = $('#From').val();
+          var date_end = $('#to').val();
+           if(date_start != '' && date_end != '')
+    {
+            $.ajax({
+                url: "/alphalab/api/dataGraph/dash_micro/microAnalyst.php?",
+                method:"GET", 
+                dataType: 'json',
+                data:{
+                  From:date_start, 
+                  to:date_end 
+                },
+                success: function(res) {
+                    var graphLabels = [],
+                        graphData = [];
+                    for(var i=0;i<res.length;i++){
+                        graphData.push(res[i].nums);
+                        graphLabels.push(res[i].micro_analyst);
+                    }
+                    //Make a call to the function to draw the bar graph
+                    drawGraph(graphLabels, graphData);
+                },
+                complete: function() {
+                    console.log("AJAX request done");
+                },
+                error: function() {
+                    console.log("Error occurred during AJAX request")
+                }               
+            });
+
+            $.ajax({
+                url: "/alphalab/api/dataGraph/dash_micro/micro_count.php?",
+                method:"GET", 
+                dataType: 'json',
+                data:{
+                  From:date_start, 
+                  to:date_end 
+                },
+                success: function(res) {
+                    console.log(res);
+                    var graphLabels_count = [],
+                        graphData_hpc_count = [],
+                        graphData_tc_count = [],
+                        graphData_ec_count = [],
+                        graphData_tcw_count = [],
+                        graphData_fcw_count = [];
+                        
+                    for(var i=0;i<res.length;i++){
+                        graphLabels_count.push(res[i].micro_analyst); 
+                        graphData_hpc_count.push(res[i].hpc_count);
+                        graphData_tc_count.push(res[i].tc_count);
+                        graphData_ec_count.push(res[i].ec_count);
+                        graphData_tcw_count.push(res[i].tcw_count);
+                        graphData_fcw_count.push(res[i].fcw_count);
+                         
+                    }
+                      
+                    //Make a call to the function to draw the bar graph
+                    drawGraphMicro(graphLabels_count, graphData_hpc_count, graphData_tc_count, graphData_ec_count, graphData_tcw_count, graphData_fcw_count);
+
+                },
+                complete: function() {
+                    console.log("AJAX request done");
+                },
+                error: function() {
+                    console.log("Error occurred during AJAX request")
+                }               
+            });
+
+          }
+            else{
+              swal("Please fill all field");
+            }
+        }); 
+        
+        function drawGraph(Labels, Data){
+          // to clear previous grap when hover
+          document.getElementById("microAnalyst_").innerHTML = '&nbsp;';
+          document.getElementById("microAnalyst_").innerHTML = '<canvas id="microAnalyst"></canvas>';
+          // to clear previous grap when hover end
+              var microAnalyst = document.getElementById("microAnalyst").getContext('2d');
+              var microAnalyst_ = new Chart(microAnalyst, {
+                type: 'doughnut',
+                data: {
+                    labels: Labels,
+                    datasets: [{
+                        // label: 'Total number of test per Micro Analyst',
+                        // label: 'test1',
+                        data: Data,
+                        backgroundColor: ['#005086','#318FB5', '#001244', '#344D68'],
+                        borderWidth: 1
+                    }]
+                },
+
+                options: {
+                    title: {
+                      display: true,
+                      text: 'TOTAL NO. OF SAMPLES OF MICRO(potable & waste) PER ANALYST'
+                    },
+                    plugins: {
+                      datalabels: {
+                        color: 'WHITE',
+                        anchor: 'center',
+                        align: 'end',
+                        formatter: Math.round,
+                        font: {
+                          weight: 'bold'
+                        }
+                      }
+                    }
+                }
+
+                // options: {
+                //     scales: {
+                //         yAxes: [{
+                //             ticks: {
+                //                 beginAtZero:true
+                //             }
+                //         }]
+                //     }
+                // }
+            });  
+        }
+
+
+        function drawGraphMicro(Labels, hpc_count, tc_count, ec_count, tcw_count, fcw_count){
+          // to clear previous grap when hover
+          document.getElementById("microTest_count_").innerHTML = '&nbsp;';
+          document.getElementById("microTest_count_").innerHTML = '<canvas id="microTest_count"></canvas>';
+          // to clear previous grap when hover end
+              var microTest_count = document.getElementById("microTest_count").getContext('2d');
+
+              var microTest_count_ = new Chart(microTest_count, {
+                type: 'bar',
+                
+                data: {
+                    labels: Labels,
+                    datasets: [{
+                        label: 'HPC',
+                        data: hpc_count,
+                        backgroundColor:'#0479cc',
+                        borderWidth: 1
+                    },
+                     {
+                        label: 'TC/ThC',
+                        data: tc_count,
+                        backgroundColor:'#21a0fa',
+                        borderWidth: 1
+                    },
+                     {
+                        label: 'E-Coli',
+                        data: ec_count,
+                        backgroundColor:'#009b77',
+                        borderWidth: 1
+                    },
+                     {
+                        label: 'Total Coliform (Waste)',
+                        data: tcw_count,
+                        backgroundColor:'#519430',
+                        borderWidth: 1
+                    },
+                     {
+                        label: 'Fecal Coliform (Waste)',
+                        data: fcw_count,
+                        backgroundColor:'#00c08d',
+                        borderWidth: 1
+                    }
+                    ]
+                    
+                },
+    //             options: {
+    //   title: {
+    //     display: true,
+    //     text: 'Population growth (millions)'
+    //   }
+    // }
+                    options: {
+                        title: {
+                          display: true,
+                          text: 'TOTAL NO. OF ANALYSES OF MICRO(potable & waste) PER ANALYST',
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    autoSkip: false,
+                                    beginAtZero:true
+
+                                }
+                            }]
+                        }
+                        },
+                        plugins: {
+                          datalabels: {
+                            color: '#FF00FF',
+                            anchor: 'end',
+                            align: 'end',
+                            formatter: Math.round,
+                            font: {
+                              weight: 'bold'
+                            }
+                          }
+                        }
+                    }
+
+
+// options: {
+//     maintainAspectRatio: false,
+//     responsive: true,
+//     scales: {
+//       yAxes: [{
+//         ticks: {
+//           beginAtZero: true,
+//         }
+//       }]
+//     },
+//     plugins: {
+//       datalabels: {
+//         anchor: 'end',
+//         align: 'top',
+//         formatter: Math.round,
+//         font: {
+//           weight: 'bold'
+//         }
+//       }
+//     }
+//   }
+
+
+            
+            });  
+        }
+
+    }
+
+
+
+
+
+      
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

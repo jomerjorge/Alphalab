@@ -1,0 +1,847 @@
+
+<div class="toolbar_cd">
+   <div class="pull-right">
+      <button onclick="add_client()" class="btn btn-sm btn-primary">
+      <span class="fa fa-plus" aria-hidden="true"></span> Add Client</button>
+    </div>
+  <div class="form-inline">
+    <div class="outer_cd">
+         <input type="text" class="form-control input-sm" id="search"  placeholder="Company Name/Owner/ID">
+         <input type="text" class="form-control input-sm" id="searchBy_add"  placeholder="Address">
+         <button class="btn btn-primary btn-sm" id="sClick" onclick="searchClient()"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+    </div> 
+    
+    <button type="button" class="btn btn-default btn-sm btn-success" id="addFilter_cd"> RWT/RWWT No. 
+      <i class="fa fa-arrow-right" aria-hidden="true"></i>
+    </button> 
+
+    <div class="inner_cd is-hidden">
+      <div id="divA_cd">
+        <div class="input-group">
+            <input style="width:120px" type="text" class="form-control input-sm" id="searchBy_rwt" name="searchBy_rwt" placeholder="RWT/RWWT No." autocomplete="off" maxlength="6" onkeypress="return isNumber(event)"> 
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-primary btn-sm" onclick="searchBy_rwt()" id="range_cd" name="range_cd"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            </span>
+        </div>
+      </div>
+
+    </div>
+ </div>
+</div>
+
+        <div class="tableFixHead" id="clientTable">
+              <table class="table table-bordered" cellspacing="0" width="100%">
+                <thead>
+                  <tr>
+                    <th width="8%">ID NO.</th>
+                    <th width="18%">COMPANY NAME</th>
+                    <th width="10%">CLIENT NAME</th>
+                    <th width="20%">ADDRESS</th>
+                    <th width="10%">CONTACT NO.</th>
+                    <th width="10%">EMAIL ADD.</th>
+                    <th width="8%">INDUSTRY</th>
+                    <th width="5%">REMARKS</th>
+                    <th width="8%">FSA</th>
+                    <th width="7%">STATUS</th>
+                    <th width="15%">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+             </table>
+        </div>
+    <br>
+    
+    <div class="pull-right" id="navigation_c">
+    Record(s) Found: <b><span id="recFound"></span></b> &nbsp
+    Total Records: <b><span id="totalrecord"></span></b> &nbsp
+    <button class="btn btn-xs btn-success prev-btn" id="prevBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i> PREV</button>
+    <button class="btn btn-xs btn-success next-btn" id="nextBtn">NEXT <i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+     &nbsp <b>Page: <span id="page"></span> of <span id="pagenum"></span></b> 
+    </div>
+
+    <!--ADD CLIENT Modal -->
+    <div class="modal fade" id="clientmodalForm" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="clientmodalForm"></span>
+                </div>
+                <div class="modal-body">
+                    <form role="form" id="cForm">
+                       <div class="form-group">
+                            <h6 id="gLCId"> Last ID: <b><span style="color:green;" id="getLastClientId"></span></b></h6>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_num">ID NO.</label>
+                            <div class="form-inline">
+                            <input size="20" id="id_num" name="id_num" class="form-control input-sm addDashes" maxlength="9" onBlur='clientIdValidation();' required="" onkeypress="return isNumber(event)" onfocus="dsabled_submitBtn()" />
+                            <img src="image/validation_loader.gif" id="loaderIcon" alt="Loading.." style="display:none" />
+                              <span id="id-availability-status"></span>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="company_name">Company Name</label>
+                            <input type="text" class="form-control input-sm" id="company_name" required=""/>
+                        </div>
+                        <div class="form-group">
+                            <label for="client_name">Client Name</label>
+                            <input type="text" class="form-control input-sm" id="client_name"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="add_prov">Address</label>
+                            <input class="form-control input-sm" id="add_st" 
+                                placeholder="Bldg. No./Street/Barangay"><br/>
+                            <input type="text" class="form-control input-sm" id="add_city" 
+                                 placeholder="City/Municipality" /><br/>
+                            <input type="text" class="form-control input-sm" id="add_prov" required="" 
+                                   placeholder="Province"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Contact Number</label>
+                            <input type="text" class="form-control input-sm" id="contact" />
+                        </div>
+                        <div class="form-group">
+                            <label for="email_add">Email Address</label>
+                            <input type="Email" class="form-control input-sm" id="email_add" />
+                        </div>
+                        <div class="form-group">
+                          <label for="business_style">Business Style:</label>
+                            <select class="form-control input-sm" id="business_style" name="business_style"  required="">
+                              <option value="" disabled selected hidden>< Select ></option>
+                              <option value="WRS">WRS</option>
+                              <option value="Hospital">Hospital</option>
+                              <option value="Waterworks">Waterworks</option>
+                              <option value="Food Establishment">Food Establishment</option>
+                              <option value="Industrial">Industrial</option>
+                              <option value="Land Developer">Land Developer</option>
+                              <option value="Mall">Mall</option>
+                              <option value="School">School</option>
+                              <option value="Residential">Residential</option>
+                              <option value="Resort">Resort</option>
+                              <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="c_remarks">Remarks</label>
+                            <input type="text" class="form-control input-sm" id="c_remarks" />
+                        </div>
+                        <div class="form-group">
+                          <label for="ass_fsa">Assigned FSA</label>
+                          <select class="form-control input-sm" id="ass_fsa" name="ass_fsa" required="">
+                          </select>
+                        </div>
+                        <div>
+                          <label for="c_status">Status</label>
+                          <select class="form-control input-sm" id="c_status" name="c_status" required="">
+                              <option value="Active" selected>Active</option>
+                              <option value="Per Call">Per Call</option>
+                              <option value="Inactive">Inactive</option>
+                          </select>
+                        </div>
+                        <div class="modal-footer">
+                              <button type="submit" id="clientIdSaveBtn" class="btn btn-sm btn-primary">
+                              <span class="fa fa-floppy-o" aria-hidden="true"></span> Save</button>
+                              <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                              <span class="fa fa-times" aria-hidden="true"></span> Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FORM MODAL END -->
+
+
+<!-- VIEW TEST REQUEST RECORDS -->
+  <div class="modal modal-wide fade" id="modalReq" name="modalReq" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalReq">Test Records</span>
+                    <button type="button" id="addRequest" name="addRequest" class="btn btn-default btn-sm pull-right" style="background-color: #C1DEFE;"><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+                </div>
+                <div class="modal-body" >
+                  <form role="form" class="reqAddForm" id="reqAddForm" style="padding-left: 15%;" >
+                    
+                      <div class="form-group">
+                        <div class="form-inline">
+                     &nbsp &nbsp &nbsp &nbsp &nbsp <b>Test Category:</b> 
+                      <select class="form-control input-sm" id="test_cat" name="test_cat" onchange="category()" required="">
+                        <option value="" disabled selected hidden>< Select ></option>
+                        <optgroup label="MICRO TEST">
+                          <option value="MICRO">MICRO</option>
+                          <option value="MICRO & PCHEM">MICRO & PCHEM</option>
+                          <option value="MICRO with Special Test">MICRO with Special Test</option>
+                          <option value="POOL">POOL</option>
+                        </optgroup>
+                        <optgroup label="PCHEM TEST">
+                          <option value="PCHEM">PCHEM</option>
+                          <option value="SPECIAL(PCHEM)">SPECIAL(PCHEM)</option>
+                          <option value="DIALYSIS">DIALYSIS</option>
+                        </optgroup>
+                        <optgroup label="WASTE TEST">
+                          <option value="WASTE">WASTE</option>
+                          <option value="WASTE & COLIFORM">WASTE & COLIFORM</option>
+                          <option value="SPECIAL(WASTE)">SPECIAL(WASTE)</option>
+                          <option value="SPECIAL(WASTE) & COLIFORM">SPECIAL(WASTE) & COLIFORM</option>
+                          <option value="COLIFORM(Waste)">COLIFORM(Waste)</option>
+                        </optgroup>
+                      </select>
+                    &nbsp
+                    <input size="19px" type="text" class="form-control input-sm" id="rwt_num" onfocus="disSaveBtn();" onBlur="checkAvailability()" required="" placeholder="RWT Number" onkeypress="return isNumber(event)" maxlength="6" disabled autocomplete="off">
+                      <img src="image/validation_loader.gif" id="loaderIconRWT" alt="Loading.." style="display:none" />
+                      <span class="myClass" id="rwt-availability-status"></span>
+
+                      <br / >
+                      <br / >
+                       <b>Number of Samples: </b>
+                      <input size="10" type="text" class="form-control input-sm" 
+                              id="micro_count" name="micro_count" onkeypress="return isNumber(event)" placeholder="Micro Qty." disabled required="" autocomplete="off" maxlength="3"/> &nbsp
+                      <input size="10" type="text" class="form-control input-sm" 
+                            id="pchem_count" name="pchem_count" onkeypress="return isNumber(event)" placeholder="Pchem Qty." disabled required="" autocomplete="off" maxlength="3"/> &nbsp
+                      <input size="10" type="text" class="form-control input-sm" 
+                          id="waste_count" name="waste_count" onkeypress="return isNumber(event)" placeholder="Waste Qty." disabled required="" autocomplete="off" maxlength="3"/>
+                      
+                      <br / >
+                      <br / >
+                      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <b>Date: </b>
+                      <input placeholder="Date Received" class="form-control input-sm" type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="date_rcvd" name="date_rcvd" required=""/>
+                     
+                      &nbsp
+                      <input placeholder="Date of Sample" class="form-control input-sm" onfocus="(this.type='date')" onblur="(this.type='text')" id="date_sample" name="date_sample" type="text" required=""/>
+                   
+                      <br / >
+                      <br / >
+                      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+                      &nbsp &nbsp &nbsp &nbsp &nbsp 
+                      <select class="form-control input-sm" id="fsa" name="fsa" required="">
+                      </select>
+                      &nbsp
+                      <input type="hidden" name="state" id="state" value="Ongoing" />
+                      <input class="form-control input-sm" id="remarks_" name="remarks_" type="text" placeholder="Remarks" />
+                   
+                      <br / >
+                      <br / >
+                      &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+                      &nbsp &nbsp &nbsp &nbsp &nbsp
+                      <button type="submit" id="rwtSaveBtn" class="btn btn-xs btn-primary"> 
+                          <span class="fa fa-floppy-o" aria-hidden="true"></span> Save</button>
+                          <button type="button" id="CloseAddRequest" class="btn btn-xs btn-danger"> 
+                          <span class="fa fa-times" aria-hidden="true"></span> Cancel</button>
+                        </div>
+                      </div>
+                          
+                          <input type="hidden" id="hiddenClientid" />
+                  </form>
+                 <div class="tableFixHead">
+                  <table id="reqRec" class="table table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th width="15%">TEST CATEGORY</th>
+                        <th width="7%">RWT NO.</th>
+                        <th width="10%">DATE RECEIVED</th>
+                        <th width="10%">DATE OF SAMPLE</th>
+                        <th width="1%">MICRO</th>
+                        <th width="1%">PCHEM</th>
+                        <th width="1%">WASTE</th>
+                        <th width="8%">SUBMITTED BY</th>
+                        <th width="10%">REMARKS</th>
+                        <th width="10%">ACTION</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                  </div>
+                </div>
+              <div class="modal-footer">
+                  <input type="hidden" id="hiddenTestid" />
+                        <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                        <span class="fa fa-times" aria-hidden="true"></span> Close</button>
+                  </div>
+              </div>
+        </div>
+    </div>
+<!-- END TEST RECORDS MODAL -->
+
+<!-- VIEW MICRO RESULTS -->
+  <div class="modal modal-wide fade" id="modalMicro" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalMicro">Test Records</span> 
+                    &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+                    <span class="modal-title label label-success" id="cc_remarks">Test Records</span>
+                </div>
+                <div class="modal-body">
+                    <form role="form" id="microForm">
+                      <div class="form-group">
+                        <div class="form-inline">
+                          <label for="sam_param">Sample Type</br>
+                            <select class="form-control input-sm" id="sam_param" name="sam_param" required>
+                              <option value="TThH">TThH</option>
+                              <option value="TTh">TTh</option>
+                              <option value="Dialysis">Dialysis</option>
+                              <option value="TThH/E">TThH/E</option>
+                              <option value="TTh/E">TTh/E</option>
+                              <option value="HPC">HPC</option>
+                              <option value="EC">EC</option>
+                              <option value="HPC/E">HPC/E</option>
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                          </label>
+                          <label for="water_des">Water Description</br>
+                            <select class="form-control input-sm" id="water_des" name="water_des">
+                              <option value="" style="color: #E6E6E6">< Select ></option>
+                              <option value="Purified">Purified</option>
+                              <option value="Mineral">Mineral</option>
+                              <option value="Alkaline">Alkaline</option>
+                              <option value="Raw">Raw</option>
+                              <option value="Pi">Pi</option>
+                              <option value="Swimming Pool">Swimming Pool</option>
+                              <option value="As Specified">As Specified</option>
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                          </label>
+                          <label for="sample_label">Source of Sample</br>
+                            <input list="sample_label_list" type="text" class="form-control input-sm" name="sample_label" id="sample_label" autocomplete="off" required="">
+                            <datalist id="sample_label_list">
+                              <option value="Deep Well">
+                              <option value="Water District">
+                              <option value="Plant">
+                              <option value="Spring Developed">
+                              <option value="Space Pure Plant">
+                              <option value="Product Spout">
+                              <option value="Not Specified">
+                            </datalist>
+                          </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <label for="sam_point">Sampling Point</br>
+                            <input list="sam_point_list" type="text" class="form-control input-sm" name="sam_point" id="sam_point" autocomplete="off">
+                            <datalist id="sam_point_list">
+                              <option value="Product Spout">
+                              <option value="Pump">
+                              <option value="Tank">
+                              <option value="Faucet">
+                            </datalist>
+                          </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <label for="sam_place">Place of Sampling</br>
+                              <input type="text" class="form-control input-sm" name="sam_place" id="sam_place" />
+                          </label>
+                          <input type="hidden" name="tc_potable" id="tc_potable" />
+                          <input type="hidden" name="thc_potable" id="thc_potable" />
+                          <input type="hidden" name="hpc_result" id="hpc_result" />
+                          <input type="hidden" name="ec_result" id="ec_result" />
+                          <input type="hidden" name="tc_waste" id="tc_waste"/>
+                          <input type="hidden" name="fc_waste" id="fc_waste"/>
+                          <input type="hidden" name="remarks" id="remarks" value="Ongoing" />
+                          <input type="hidden" name="_microId" id="_microId" />
+
+                          <button type="submit" name="save" id="save" class="btn btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+                          <button type="submit" name="updatebtn" id="updatebtn" class="btn btn-success btn-sm" style="display: none; ">Update</button>
+
+                          <!-- for every row in micro -->
+                          <input type="hidden" id="hiddenMicroid" />
+                          <!-- for every row in micro -->
+
+                        </div>
+                      </div>
+                    </form>
+                    
+                <div class="tableFixHead">
+                  <table id="microTable" class="table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                          <th width="2%">Sample Type</th>
+                          <th width="5%">Place of Sample</th>
+                          <th width="5%">Sample Desc.</th>
+                          <th width="2%">TC-P</th>
+                          <th width="2%">ThC-P</th>
+                          <th width="2%">HPC</th>
+                          <th width="3%">EC</th>
+                          <th width="3%">Analyst</th>
+                          <th width="2%">Remarks</th>
+                          <th width="2%">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+                </div>
+                <div class="modal-footer">
+                      <!-- for viewing micro -->
+                      <input type="hidden" id="hiddenViewMicroid" />
+                      <!-- for viewing micro -->
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="fa fa-times" aria-hidden="true"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END MICRO MODAL -->
+
+
+<!-- VIEW MICRO WASTE RESULTS -->
+  <div class="modal modal-wide fade" id="modalMicroWaste" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalMicroWaste">Test Records</span>
+                </div>
+              
+                <div class="modal-body">
+                    <form role="form" id="microWasteForm">
+                      <div class="form-group">
+                        <div class="form-inline">
+                          <label for="sam_param_w">Sample Type</br>
+                            <select class="form-control input-sm" id="sam_param_w" name="sam_param_w" required>
+                              <option value="" style="color: #E6E6E6">< Select ></option>
+                              <option value="Total Coliform">Total Coliform</option>
+                              <option value="Fecal Coliform">Fecal Coliform</option>
+                              <option value="Total & Fecal Coliform">Total & Fecal Coliform</option>
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                          </label>
+                          <label for="water_des_mw">Water Description</br>
+                            <select class="form-control input-sm" id="water_des_mw" name="water_des_mw">
+                              <option value="" style="color: #E6E6E6">< Select ></option>
+                              <option value="Influent">Influent</option>
+                              <option value="Effluent">Effluent</option>
+                              <option value="Domestic Waste (STP)">Domestic Waste (STP)</option>
+                              <option value="As Specified">As Specified</option>
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                          </label>
+                          <label for="sample_label_mw">Source of Sample</br>
+                          <input type="text" class="form-control input-sm" id="sample_label_mw" 
+                                 name="sample_label_mw" autocomplete="off" />
+                          </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <label for="sam_place_mw">Place of Sampling</br>
+                              <input type="text" class="form-control input-sm" name="sam_place_mw" id="sam_place_mw" />
+                          </label>
+                          <input type="hidden" name="remarks_mw" id="remarks_mw" value="Ongoing"/>
+                          <input type="hidden" name="tc_potable_mw" id="tc_potable_mw"/>
+                          <input type="hidden" name="thc_potable_mw" id="thc_potable_mw"/>
+                          <input type="hidden" name="hpc_result_mw" id="hpc_result_mw"/>
+                          <input type="hidden" name="ec_result_mw" id="ec_result_mw"/>
+                          <input type="hidden" name="tc_waste_mw" id="tc_waste_mw"/>
+                          <input type="hidden" name="fc_waste_mw" id="fc_waste_mw"/>
+                          <input type="hidden" name="_microWasteId" id="_microWasteId" />
+
+                          <button type="submit" name="savew" id="savew" class="btn btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+                          <button type="submit" name="updatebtnw" id="updatebtnw" class="btn btn-success btn-sm" style="display: none; ">Update</button>
+
+                          <!-- for every row in micro waste -->
+                          <input type="hidden" id="hiddenMicroWasteid" /> 
+                          <!-- for every row in micro waste -->
+
+                        </div>
+                      </div>
+                    </form>
+                    
+              <div class="tableFixHead">
+                  <table id="microWasteTable" class="table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                          <th width="2%">Sample Type</th>
+                          <th width="5%">Place of Sample</th>
+                          <th width="5%">Sample Desc.</th>
+                          <th width="3%">TC-W</th>
+                          <th width="3%">FC-W</th>
+                          <th width="3%">Analyst</th>
+                          <th width="2%">Remarks</th>
+                          <th width="2%">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+              </div>
+                </div>
+                <div class="modal-footer">
+                      <!-- for viewing micro waste -->
+                      <input type="hidden" id="hiddenViewMicroWasteid" />
+                      <!-- for viewing micro waste -->
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="fa fa-times" aria-hidden="true"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END MICRO WASTE MODAL -->
+
+
+<!-- VIEW PCHEM RESULTS -->
+  <div class="modal modal-wide fade" id="modalPchem" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title" id="modalPchem">Test Records</span>
+            &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+            <span class="modal-title label label-success" id="cc_remarks_pc">Test Records</span>
+
+              <button type="button" id="addPchem" name="addPchem" class="btn btn-default btn-sm pull-right" onclick="addPchem()" style="background-color: #C1DEFE;"><i class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+
+              <button type="button" id="sortDialysis" name="sortDialysis" class="btn btn-default btn-sm pull-right" onclick="sortParameters()" style="background-color: #C1DEFE;">Dialysis</button>
+
+        </div>
+        <div class="modal-body">
+          <div id="mySidenav" class="sidenav">
+            <form role="form" id="pchemForm">
+              <div class="form-group">
+                <div class="form-inline">
+                  <label for="water_desp">Water Description :
+                    <select class="form-control input-sm" id="water_desp" name="water_desp">
+                      <option value="" style="color: #E6E6E6">< Select ></option>
+                      <option value="Purified">Purified</option>
+                      <option value="Mineral">Mineral</option>
+                      <option value="Alkaline">Alkaline</option>
+                      <option value="Raw">Raw</option>
+                      <option value="Pi">Pi</option>
+                      <option value="Swimming Pool">Swimming Pool</option>
+                      <option value="As Specified">As Specified</option>
+                    </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                  </label>
+                  <label for="sample_label_p">Source of Sample:
+                    <input list="sample_label_listpw" type="text" class="form-control input-sm" name="sample_label_p" id="sample_label_p" required="" autocomplete="off">
+                    <datalist id="sample_label_listpw">
+                      <option value="Deep Well">
+                      <option value="Water District">
+                      <option value="Plant">
+                      <option value="Spring Developed">
+                      <option value="Space Pure Plant">
+                      <option value="Product Spout">
+                      <option value="Not Specified">
+                    </datalist>
+                  </label></br>
+                  <label for="sam_point_p">Sampling Point</br>
+                    <input list="sam_point_p_list" type="text" class="form-control input-sm" name="sam_point_p" id="sam_point_p" autocomplete="off">
+                    <datalist id="sam_point_p_list">
+                      <option value="Product Spout">
+                      <option value="Pump">
+                      <option value="Tank">
+                      <option value="Faucet">
+                    </datalist>
+                  </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="dropdown" style="display:inline-block;">
+                <button style="width: 200px;" class="btn dropdown-toggle btn-sm" type="button" id="pchembtn" 
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="ui-button-text">PCHEM</span></button>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item btn-xs" href="javascript:newpchem();">NORMAL PCHEM</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:dialysis();">Dialysis</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:sysDes();">System Designed</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:pool();">Pool</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:mtp();">MTP</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:oldLag();">Old Laguna</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:nwrb();">NWRB</a></li>
+                    <li><a class="dropdown-item btn-xs" href="javascript:clearSelected();">Clear Items</a></li>
+                  </ul>
+                </div>
+                  <br/>
+                  <br/>
+                  <label for="p_param">Test Parameters :
+                    <select class="form-control" id="p_param" name="p_param[]" multiple="multiple" required="">
+                      <optgroup label="PHYSICO-CHEMICAL">
+                        <option value="Odor">Odor</option>
+                        <option value="Taste">Taste</option>
+                        <option value="Color(Apparent)">Color(Apparent)</option>
+                        <option value="Turbidity">Turbidity</option>
+                        <option value="Acidity">Acidity</option>
+                        <option value="Alkalinity">Alkalinity</option>
+                        <option value="Bicarbonates">Bicarbonates</option>
+                        <option value="Carbonates">Carbonates</option>
+                        <option value="Calcium">Calcium</option>
+                        <option value="Total Hardness as CaCO3">Total Hardness as CaCO3</option>
+                        <option value="pH  @ 25 ºC">pH  @ 25 ºC</option>
+                        <option value="Temperature">Temperature</option>
+                        <option value="Conductivity">Conductivity</option>
+                        <option value="Chlorides">Chlorides</option>
+                        <option value="Phosphate as PO4-P">Phosphate as PO4-P</option>
+                        <option value="Nitrate(as NO3-Nitrogen)">Nitrate(as NO3-Nitrogen)</option>
+                        <option value="Nitrite(as NO2-Nitrogen)">Nitrite(as NO2-Nitrogen)</option>
+                        <option value="Fluoride">Fluoride</option>
+                        <option value="Chlorine(Residual)">Chlorine(Residual)</option>
+                        <option value="Chlorine(Total)">Chlorine(Total)</option>
+                        <option value="Sulfate">Sulfate</option>
+                        <option value="Salinity">Salinity</option>
+                        <option value="Silica">Silica</option>
+                        <option value="Sulfide as Hydrogen Sulfide">Sulfide as Hydrogen Sulfide</option>
+                        <option value="Total Dissolved Solids">Total Dissolved Solids</option>
+                        <option value="Total Solids">Total Solids</option>
+                        <option value="Surfactants(MBAS as LAS, MW = 348.48 g/mole)">Surfactants(MBAS as LAS, MW = 348.48 g/mole)</option>
+                        <option value="Ammonia as NH3-N">Ammonia as NH3-N</option>
+                        <option value="Sodium Absorption Ratio">Sodium Absorption Ratio</option>
+                        <option value="Total Nitrogen">Total Nitrogen</option>
+                        <option value="Total Phosphorus">Total Phosphorus</option>
+                        <option value="Sulfur">Sulfur</option>
+                        <option value="Excess Chlorine">Excess Chlorine</option>
+                        <option value="Disinfectant Residual">Disinfectant Residual</option>
+                        <option value="Specific Gravity">Specific Gravity</option>
+                      </optgroup>
+                      <optgroup label="TRACE METALS">
+                        <option value="Copper as Dissolved">Copper as Dissolved</option>
+                        <option value="Iron-Total">Iron-Total</option>
+                        <option value="Iron-Soluble">Iron-Soluble</option>
+                        <option value="Manganese">Manganese</option>
+                        <option value="Sodium">Sodium</option>
+                        <option value="Selenium">Selenium</option>
+                        <option value="Arsenic">Arsenic</option>
+                        <option value="Cadmium">Cadmium</option>
+                        <option value="Chromium, Total">Chromium, Total</option>
+                        <option value="Chromium, Hexavalent">Chromium, Hexavalent</option>
+                        <option value="Cyanide">Cyanide</option>
+                        <option value="Lead">Lead</option>
+                        <option value="Aluminum">Aluminum</option>
+                        <option value="Magnesium">Magnesium</option>
+                        <option value="Potassium">Potassium</option>
+                        <option value="Zinc">Zinc</option>
+                        <option value="Silver">Silver</option>
+                        <option value="Barium">Barium</option>
+                        <option value="Nickel">Nickel</option>
+                        <option value="Mercury">Mercury</option>
+                        <option value="Benzo-α-pyrene">Benzo-α-pyrene</option>
+                        <option value="Antimony">Antimony</option>
+                        <option value="Chloramines">Chloramines</option>
+                        <option value="Boron">Boron</option>
+                        <option value="Trichloroethylene">Trichloroethylene</option>
+                      </optgroup>
+                      <optgroup label="WASTE">
+                        <option value="DO">DO</option>
+                        <option value="COD">COD</option>
+                        <option value="BOD">BOD</option>
+                        <option value="Oil & Grease">Oil & Grease</option>
+                        <option value="Total Suspended Solids">Total Suspended Solids</option>
+                      </optgroup>
+                    </select>
+                  </label>
+                  <input type="hidden" name="_pchemId" id="_pchemId" />
+                </div>
+                </br>
+                <button type="submit" name="submit" class="btn btn-primary btn-xs"> <span class="fa fa-floppy-o" aria-hidden="true"></span> Save</button>
+                <button type="button"  onclick="closeNav()" class="btn btn-danger closebtn btn-xs"> <span class="fa fa-times" aria-hidden="true"></span> Cancel</button>
+                <input type="hidden" id="hiddenPchemid" />
+              </div>
+            </form>
+          </div> 
+                <div id="pchemTable">
+                  <form method="post" id="updelpchem">
+                  <div align="right">
+
+                    <div class="btn-group btn-group-sm">
+                      <button type="submit" id="up_pchem_mul" class='btn btn-success btn-xs'><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Update</button>
+                      <button type="submit" id="del_pchem_mul" class='btn btn-danger btn-xs'><i class='fa fa-trash-o' aria-hidden='true'></i> Delete</button>
+                    </div>
+                  </div>
+                  <div class="tableFixHead">
+                  <table id="pchemTable" class="table table-condensed" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th width="1%"><center><input type="checkbox" class="delAllpchem" id="delAllpchem" name="delAllpchem" /></center></th>
+                        <th width="15%">Sample Desc.</th>
+                        <th width="12%">Test Parameters</th>
+                        <th width="12%">Method</th>
+                        <th width="8%">Test Results</th>
+                        <th width="8%">Analyst</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+                </form>
+        </div>
+      </div>
+        <div class="modal-footer">
+          <input type="hidden" id="hiddenViewPchem" />
+          <button class="btn btn-sm btn-danger" data-dismiss="modal">
+          <span class="fa fa-times" aria-hidden="true"></span> Close</button>
+        </div>
+                </div>
+    </div>
+  </div>
+
+<!-- END PCHEM RESULTS MODAL -->
+
+<!-- VIEW WASTE RESULTS -->
+  <div class="modal modal-wide fade" id="modalWaste" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title" id="modalWaste">Test Records</span>
+                    <button type="button" id="addWaste" name="addWaste" class="btn btn-default btn-sm pull-right" onclick="addWaste()" style="background-color: #C1DEFE;"><i class="fa fa-plus" aria-hidden="true"></i> ADD</button>
+                </div>
+
+  <div class="modal-body">
+    <div id="mySidenav_w" class="sidenav_w">
+      <form role="form" id="wasteForm" style="display:none">
+        <div class="form-group">
+          <div class="form-inline">
+              <label for="water_desw">Waterwater Description :
+                  <select class="form-control" id="water_desw" name="water_desw">
+                    <option value="" style="color: #E6E6E6">< Select ></option>
+                    <option value="Domestic(STP)">Domestic(STP)</option>
+                    <option value="Influent">Influent</option>
+                    <option value="Effluent">Effluent</option>
+                    <option value="Others">Others</option>
+                  </select>&nbsp;&nbsp;&nbsp;&nbsp;
+              </label>
+              <label for="sample_labelw">Source of Sample
+                  <input type="text" class="form-control input-sm" id="sample_labelw" name="sample_labelw"/>
+              </label>
+              <div class="dropdown" style="display:inline-block;">
+                <button style="width: 200px;" class="btn dropdown-toggle btn-xs" type="button" id="wastebtn" 
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="ui-button-text">WASTE</span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item btn-xs" href="javascript:waste();">6 PARAMS</a></li>
+                  <li><a class="dropdown-item btn-xs" href="javascript:span();">with SPAN</a></li>
+                  <li><a class="dropdown-item btn-xs" href="javascript:industry();">Industrial</a></li>
+                  <li><a class="dropdown-item btn-xs" href="javascript:cpip();">CPIP (Companies)</a></li>
+                  <li><a class="dropdown-item btn-xs" href="javascript:clearSelected_w();">Clear Items</a></li>
+                </ul>
+              </div>
+              <br/>
+              <br/>
+              <label for="w_param">Test Parameters
+                <select class="form-control" id="w_param" name="w_param[]" multiple="multiple" required="">
+                  <optgroup label="WASTE">
+                        <option value="DO">DO</option>
+                        <option value="COD">COD</option>
+                        <option value="BOD">BOD</option>
+                        <option value="Oil & Grease">Oil & Grease</option>
+                        <option value="Total Suspended Solids">Total Suspended Solids</option>
+                        <option value="Color(Waste)">Color(Waste)</option>
+                        <option value="pH  @ 25 ºC">pH  @ 25 ºC</option>
+                        <option value="Temperature">Temperature</option>
+                        <option value="Phosphate as PO4-P">Phosphate as PO4-P</option>
+                        <option value="Nitrate(as NO3-Nitrogen)">Nitrate(as NO3-Nitrogen)</option>
+                        <option value="Surfactants(MBAS as LAS, MW = 348.48 g/mole)">Surfactants(MBAS as LAS, MW = 348.48 g/mole)</option>
+                        <option value="Ammonia as NH3-N">Ammonia as NH3-N</option>
+                  </optgroup>
+                  <optgroup label="PHYSICO-CHEMICAL">
+                        <option value="Turbidity">Turbidity</option>
+                        <option value="Acidity">Acidity</option>
+                        <option value="Alkalinity">Alkalinity</option>
+                        <option value="Bicarbonates">Bicarbonates</option>
+                        <option value="Carbonates">Carbonates</option>
+                        <option value="Calcium">Calcium</option>
+                        <option value="Total Hardness as CaCO3">Total Hardness as CaCO3</option>
+                        <option value="Conductivity">Conductivity</option>
+                        <option value="Chlorides">Chlorides</option>
+                        <option value="Nitrite(as NO2-Nitrogen)">Nitrite(as NO2-Nitrogen)</option>
+                        <option value="Fluoride">Fluoride</option>
+                        <option value="Chlorine(Residual)">Chlorine(Residual)</option>
+                        <option value="Chlorine(Total)">Chlorine(Total)</option>
+                        <option value="Sulfate">Sulfate</option>
+                        <option value="Salinity">Salinity</option>
+                        <option value="Silica">Silica</option>
+                        <option value="Sulfide as Hydrogen Sulfide">Sulfide as Hydrogen Sulfide</option>
+                        <option value="Total Dissolved Solids">Total Dissolved Solids</option>
+                        <option value="Total Solids">Total Solids</option>
+                        <option value="Sodium Absorption Ratio">Sodium Absorption Ratio</option>
+                        <option value="Total Nitrogen">Total Nitrogen</option>
+                        <option value="Total Phosphorus">Total Phosphorus</option>
+                        <option value="Sulfur">Sulfur</option>
+                        <option value="Excess Chlorine">Excess Chlorine</option>
+                        <option value="Disinfectant Residual">Disinfectant Residual</option>
+                        <option value="Specific Gravity">Specific Gravity</option>
+                  </optgroup>
+                  <optgroup label="TRACE METALS">
+                        <option value="Copper as Dissolved">Copper as Dissolved</option>
+                        <option value="Iron">Iron</option>
+                        <option value="Iron-Soluble">Iron-Soluble</option>
+                        <option value="Manganese">Manganese</option>
+                        <option value="Sodium">Sodium</option>
+                        <option value="Selenium">Selenium</option>
+                        <option value="Arsenic">Arsenic</option>
+                        <option value="Cadmium">Cadmium</option>
+                        <option value="Chromium, Total">Chromium, Total</option>
+                        <option value="Chromium, Hexavalent">Chromium, Hexavalent</option>
+                        <option value="Cyanide">Cyanide</option>
+                        <option value="Lead">Lead</option>
+                        <option value="Aluminum">Aluminum</option>
+                        <option value="Magnesium">Magnesium</option>
+                        <option value="Potassium">Potassium</option>
+                        <option value="Zinc">Zinc</option>
+                        <option value="Silver">Silver</option>
+                        <option value="Barium">Barium</option>
+                        <option value="" ="Nickel">Nickel</option>
+                        <option value="Mercury">Mercury</option>
+                        <option value="Benzo-α-pyrene">Benzo-α-pyrene</option>
+                        <option value="Antimony">Antimony</option>
+                        <option value="Chloramines">Chloramines</option>
+                        <option value="Boron">Boron</option>
+                        <option value="Trichloroethylene">Trichloroethylene</option>
+                  </optgroup>
+                </select>
+              </label>
+                <input type="hidden" class="form-control input-sm" id="w_result" name="w_result" />
+              <input type="hidden" name="_wasteId" id="_wasteId" />
+          </div>
+                      </br>
+                        <button type="submit" name="submit" class="btn btn-primary btn-xs"> <span class="fa fa-floppy-o" aria-hidden="true"></span> Save</button>
+                        <button type="button"  onclick="closeNav_w()" class="btn btn-danger closebtn btn-xs"> <span class="fa fa-times" aria-hidden="true"></span> Cancel</button>
+                        <input type="hidden" id="hiddenWasteid" />
+                    </div>
+                  </form>
+                </div>
+                <div id="wasteTable">
+                  <form method="post" id="delete_waste">
+                    <div align="right">
+                       <button type="submit" id="del_waste_mul" class='btn btn-danger btn-xs'><i class='fa fa-trash-o' aria-hidden='true'></i> Delete</button>
+                    </div>
+                  <div class="tableFixHead">
+                    <table id="wasteTable" class="table table-condensed" cellspacing="0" width="100%">
+                      <thead>
+                        <tr>
+                          <th width="1%"><center><input type="checkbox" class="delAllwaste" id="delAllwaste" name="delAllwaste" /></center></th>
+                          <th width="15%">Sample Desc.</th>
+                          <th width="12%">Test Parameters</th>
+                          <th width="12%">Method</th>
+                          <th width="8%">Test Results</th>
+                          <th width="8%">Analyst</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                  </form>
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" id="hiddenViewWaste" />
+                      <button class="btn btn-sm btn-danger" data-dismiss="modal">
+                      <span class="fa fa-times" aria-hidden="true"></span> Close</button>
+                </div>
+            </div>
+        </div>
+  </div>
+<!-- END WASTE RESULTS MODAL -->
+
+ 
+
+
+<script type="text/javascript" src="script/addDashes.js"></script>
+<script type="text/javascript" src="script/client.js"></script>
+<script type="text/javascript" src="script/clientIdValidation.js"></script>
+<script type="text/javascript" src="script/microresult.js"></script>
+<script type="text/javascript" src="script/microWasteresult.js"></script>
+<script type="text/javascript" src="script/testrequest.js"></script>
+<script type="text/javascript" src="script/wasteresult.js"></script>
+<script type="text/javascript" src="script/paramselection.js"></script>
+<script type="text/javascript" src="script/pchemresult.js"></script>
+<script type="text/javascript" src="script/rwtvalidation.js"></script>
+<script type="text/javascript" src="script/fixedHeader.js"></script>
+<script type="text/javascript" src="script/fsa_analyst_ddlist.js"></script>
+
+<!-- <script type="text/javascript">
+
+      $(function() {
+        $('#p_param').on('focus', function() {
+              document.getElementById("pchembtn").style.background='#ebebe0';
+              document.getElementById("wastebtn").style.background='#ebebe0';
+              $("#pchembtn span").text("PCHEM");
+              $("#wastebtn span").text("WASTE");
+        });
+    })
+      
+</script> -->
